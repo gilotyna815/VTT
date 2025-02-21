@@ -47,23 +47,21 @@ class VTT_API AVTTGameMode : public AGameModeBase
 public:
 	AVTTGameMode();
 
-
 	virtual void StartPlay() override;
 
 	virtual void InitializeToolsSystem();
 	
+	virtual void RegisterTools();
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void ShutdownToolsSystem();
-
-	virtual void RegisterTools();
 
 	UPROPERTY()
 	URuntimeToolsFrameworkSubsystem* ToolsSystem;
 
 	UPROPERTY()
 	URuntimeMeshSceneSubsystem* SceneSystem;
-
 
 };
 

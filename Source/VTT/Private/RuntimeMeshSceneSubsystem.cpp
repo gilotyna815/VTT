@@ -25,47 +25,19 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "RuntimeMeshSceneSubsystem.h"
 
-#include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "VTTGameMode.generated.h"
+#define LOCTEXT_NAMESPACE "URuntimeMeshSceneSubsystem"
 
-class URuntimeToolsFrameworkSubsystem;
-class URuntimeMeshSceneSubsystem;
+URuntimeMeshSceneSubsystem* URuntimeMeshSceneSubsystem::InstanceSingleton = nullptr;
 
-/**
- * This GameMode initializes the URuntimeMeshSceneSubsystem and URuntimeToolsFrameworkSubsystem, and then registers various Tools (see InitializeToolsSystem).
- * 
- * The GameMode Tick also ticks the Tools system
- */
-UCLASS()
-class VTT_API AVTTGameMode : public AGameModeBase
+void URuntimeMeshSceneSubsystem::InitializeSingleton(URuntimeMeshSceneSubsystem* Subsystem)
 {
-	GENERATED_BODY()
+	check(InstanceSingleton == nullptr);
+	InstanceSingleton = Subsystem;
+}
 
-public:
-	AVTTGameMode();
-
-
-	virtual void StartPlay() override;
-
-	virtual void InitializeToolsSystem();
-	
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void ShutdownToolsSystem();
-
-	virtual void RegisterTools();
-
-	UPROPERTY()
-	URuntimeToolsFrameworkSubsystem* ToolsSystem;
-
-	UPROPERTY()
-	URuntimeMeshSceneSubsystem* SceneSystem;
-
-
-};
-
-
-
+URuntimeMeshSceneSubsystem* URuntimeMeshSceneSubsystem::Get()
+{
+	return InstanceSingleton;
+}

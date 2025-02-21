@@ -28,44 +28,47 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "VTTGameMode.generated.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "InteractiveToolsContext.h"
 
-class URuntimeToolsFrameworkSubsystem;
-class URuntimeMeshSceneSubsystem;
+#include "ToolsContextRenderComponent.h"
+//#include "MeshScene/SceneHistoryManager.h"
+//#include "Interaction/SceneObjectSelectionInteraction.h"
+//#include "Interaction/SceneObjectTransformInteraction.h"
+
+#include "RuntimeToolsFrameworkSubsystem.generated.h"
 
 /**
- * This GameMode initializes the URuntimeMeshSceneSubsystem and URuntimeToolsFrameworkSubsystem, and then registers various Tools (see InitializeToolsSystem).
- * 
- * The GameMode Tick also ticks the Tools system
+ * Code and comments based on Ryan Schmidt's UE5RuntimeToolsFrameworkDemo
+ * https://github.com/gradientspace/UE5RuntimeToolsFrameworkDemo
  */
 UCLASS()
-class VTT_API AVTTGameMode : public AGameModeBase
+class VTT_API URuntimeToolsFrameworkSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+	//
+	// Small hack to workaround the fact that you generally need rthe UGameInstance pointer to look up a GameInstance subsystem. We store the pointer abd then allow ::Get() to return it (ie actually a singleton)
+	//
 public:
-	AVTTGameMode();
+	static void InitializeSingleton(URuntimeToolsFrameworkSubsystem* Subsystem);
+	static URuntimeToolsFrameworkSubsystem* Get();
+protected:
+	static URuntimeToolsFrameworkSubsystem* InstanceSingleton;
+
+	//
+	// Functions to setup/shutdown/operate the RuntimeToolsFramework
+	//
+public:
+	void InitializeToolsContext(UWorld* TargetWorld);
+	virtual void Tick(float DeltaTime);
 
 
-	virtual void StartPlay() override;
+public:
+	UPROPERTY()
+	UWorld* TargetWorld;
 
-	virtual void InitializeToolsSystem();
+	//UPROPERTY()
+	//UInteractiveToolsContext* ToolsContext;
 	
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void ShutdownToolsSystem();
-
-	virtual void RegisterTools();
-
-	UPROPERTY()
-	URuntimeToolsFrameworkSubsystem* ToolsSystem;
-
-	UPROPERTY()
-	URuntimeMeshSceneSubsystem* SceneSystem;
-
-
 };
-
-
-

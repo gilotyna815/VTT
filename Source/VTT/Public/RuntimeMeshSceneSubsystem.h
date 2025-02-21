@@ -28,44 +28,30 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "VTTGameMode.generated.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "InteractiveToolsContext.h"
 
-class URuntimeToolsFrameworkSubsystem;
-class URuntimeMeshSceneSubsystem;
+#include "RuntimeMeshSceneSubsystem.generated.h"
 
 /**
- * This GameMode initializes the URuntimeMeshSceneSubsystem and URuntimeToolsFrameworkSubsystem, and then registers various Tools (see InitializeToolsSystem).
- * 
- * The GameMode Tick also ticks the Tools system
+ * URuntimeMeshSceneSubsystem manages a "Scene" of "SceneObjects", currently only URuntimeMeshSceneObject (SO).
+ *
+ * Use CreateNewSceneObject() to create a new SO, and the various Delete functions to remove them.
+ * These changes will be undo-able, ie they will send Change events to the USceneHistoryManager instance.
+ *
+ * An active Selection Set is tracked, and there are API functions for modifying this Selection set, also undo-able.
+ *
+ * Cast rays into the scene using FindNearestHitObject()
  */
 UCLASS()
-class VTT_API AVTTGameMode : public AGameModeBase
+class VTT_API URuntimeMeshSceneSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-
-public:
-	AVTTGameMode();
-
-
-	virtual void StartPlay() override;
-
-	virtual void InitializeToolsSystem();
 	
-	virtual void Tick(float DeltaTime) override;
+public:
+	static void InitializeSingleton(URuntimeMeshSceneSubsystem* Subsystem);
+	static URuntimeMeshSceneSubsystem* Get();
 
-	virtual void ShutdownToolsSystem();
-
-	virtual void RegisterTools();
-
-	UPROPERTY()
-	URuntimeToolsFrameworkSubsystem* ToolsSystem;
-
-	UPROPERTY()
-	URuntimeMeshSceneSubsystem* SceneSystem;
-
-
+protected:
+	static URuntimeMeshSceneSubsystem* InstanceSingleton;
 };
-
-
-

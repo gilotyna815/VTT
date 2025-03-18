@@ -54,4 +54,13 @@ public:
 
 protected:
 	static URuntimeMeshSceneSubsystem* InstanceSingleton;
+
+public:
+	virtual void Deinitialize() override;
+
+
+	virtual void SetCurrentTransactionsAPI(IToolsContextTransactionsAPI* TransactionsAPI);
+
+protected:
+	IToolsContextTransactionsAPI* TransactionsAPI = nullptr;
 };

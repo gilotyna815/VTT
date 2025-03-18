@@ -41,3 +41,13 @@ URuntimeMeshSceneSubsystem* URuntimeMeshSceneSubsystem::Get()
 {
 	return InstanceSingleton;
 }
+
+void URuntimeMeshSceneSubsystem::Deinitialize()
+{
+	InstanceSingleton = nullptr;
+}
+
+void URuntimeMeshSceneSubsystem::SetCurrentTransactionsAPI(IToolsContextTransactionsAPI* TransactionsAPIIn)
+{
+	TransactionsAPI = TransactionsAPIIn;
+}

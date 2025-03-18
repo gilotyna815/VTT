@@ -47,8 +47,6 @@ AVTTGameMode::AVTTGameMode()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-
-
 void AVTTGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -71,7 +69,7 @@ void AVTTGameMode::InitializeToolsSystem()
 
 	// initialize Tools and Scene systems
 	ToolsSystem->InitializeToolsContext(World);
-
+	//SceneSystem->SetCurrentTransactionsAPI(); //<==
 }
 
 void AVTTGameMode::Tick(float DeltaTime)

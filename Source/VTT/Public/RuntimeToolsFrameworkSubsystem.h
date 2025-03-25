@@ -32,15 +32,14 @@
 #include "InteractiveToolsContext.h"
 
 #include "ToolsContextRenderComponent.h"
-//#include "MeshScene/SceneHistoryManager.h"
+#include "SceneHistoryManager.h"
 //#include "Interaction/SceneObjectSelectionInteraction.h"
 //#include "Interaction/SceneObjectTransformInteraction.h"
 
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
 
 /**
- * Code and comments based on Ryan Schmidt's UE5RuntimeToolsFrameworkDemo
- * https://github.com/gradientspace/UE5RuntimeToolsFrameworkDemo
+ *
  */
 UCLASS()
 class VTT_API URuntimeToolsFrameworkSubsystem : public UGameInstanceSubsystem
@@ -48,7 +47,7 @@ class VTT_API URuntimeToolsFrameworkSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 	//
-	// Small hack to workaround the fact that you generally need rthe UGameInstance pointer to look up a GameInstance subsystem. We store the pointer abd then allow ::Get() to return it (ie actually a singleton)
+	// Small hack to workaround the fact that you generally need the UGameInstance pointer to look up a GameInstance subsystem. We store the pointer abd then allow ::Get() to return it (ie actually a singleton)
 	//
 public:
 	static void InitializeSingleton(URuntimeToolsFrameworkSubsystem* Subsystem);
@@ -57,18 +56,46 @@ protected:
 	static URuntimeToolsFrameworkSubsystem* InstanceSingleton;
 
 	//
+	// UGameInstanceSubsystem API implementation
+	//
+public:
+	virtual void Deinitialize() override;
+
+	//
 	// Functions to setup/shutdown/operate the RuntimeToolsFramework
 	//
 public:
 	void InitializeToolsContext(UWorld* TargetWorld);
 	virtual void Tick(float DeltaTime);
+	void ShutdownToolsContext();
 
+	//
+	// Access to various data structures created/tracked by the Subsystem
+	//
+
+	UFUNCTION(BlueprintCallable)
+	USceneHistoryManager* GetSceneHistory() { return SceneHistory;	} //<==
+
+	//
+	// Tool creation/management BP API
+	//
+
+	UFUNCTION(BlueprintCallable)
+	bool CancelOrCompleteActiveTool();
 
 public:
 	UPROPERTY()
 	UWorld* TargetWorld;
 
-	//UPROPERTY()
-	//UInteractiveToolsContext* ToolsContext;
+	UPROPERTY()
+	UInteractiveToolsContext* ToolsContext;
+
+	UPROPERTY()
+	USceneHistoryManager* SceneHistory;
+
+protected:
+	bool bIsShuttingDown = false;
+	void InternalConsistencyChecks();
+
 	
 };

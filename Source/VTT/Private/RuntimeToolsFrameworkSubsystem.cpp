@@ -43,18 +43,73 @@ URuntimeToolsFrameworkSubsystem* URuntimeToolsFrameworkSubsystem::Get()
 	return InstanceSingleton;
 }
 
+void URuntimeToolsFrameworkSubsystem::Deinitialize()
+{
+	ShutdownToolsContext(); //<==
+
+	InstanceSingleton = nullptr;
+}
+
 void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorldIn)
 {
 	TargetWorld = TargetWorldIn;
 
-	//ToolsContext = NewObject<UInteractiveToolsContext>();
+	ToolsContext = NewObject<UInteractiveToolsContext>();
 
-
+	//==>
 }
 
+//UE_DISABLE_OPTIMIZATION
 void URuntimeToolsFrameworkSubsystem::Tick(float DeltaTime)
 {
 
 }
 
+void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()
+{
+	bIsShuttingDown = true;
 
+	if (ToolsContext != nullptr)
+	{
+		CancelOrCompleteActiveTool();
+
+		
+
+		//==>
+	}
+}
+
+bool URuntimeToolsFrameworkSubsystem::CancelOrCompleteActiveTool()
+{
+	if (ToolsContext && ToolsContext->ToolManager)
+	{
+		bool bActive = ToolsContext->ToolManager->HasActiveTool(EToolSide::Mouse);
+		if (bActive)
+		{
+			EToolShutdownType ShutdownType = ToolsContext->ToolManager->CanCancelActiveTool(EToolSide::Mouse) ? EToolShutdownType::Cancel : EToolShutdownType::Completed;
+			ToolsContext->ToolManager->DeactivateTool(EToolSide::Mouse, ShutdownType);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("URuntimeToolsFrameworkSubsystem::CancelOrCompleteActiveTool - No Active Tool!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("URuntimeToolsFrameworkSubsystem::CancelOrCompleteActiveTool - Tool Context is not initialized!"));
+	}
+
+	InternalConsistencyChecks();
+	return false;
+}
+
+void URuntimeToolsFrameworkSubsystem::InternalConsistencyChecks()
+{
+	if (GetSceneHistory())
+	{
+		if (!ensure(GetSceneHistory()->IsBuildingTransaction() == false))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[URuntimeToolsFrameworkSubsystem::InternalConsistencyChecks] Still building Transaction! Likely forgot to EndTransaction() somewhere!!"));
+		}
+	}
+}

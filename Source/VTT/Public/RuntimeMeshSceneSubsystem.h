@@ -61,6 +61,10 @@ public:
 
 	virtual void SetCurrentTransactionsAPI(IToolsContextTransactionsAPI* TransactionsAPI);
 
+public:
+	DECLARE_MULTICAST_DELEGATE_OneParam(FMeshSceneSelectionChangedEvent, URuntimeMeshSceneSubsystem*)
+	FMeshSceneSelectionChangedEvent OnSelectionModified;
+
 protected:
 	IToolsContextTransactionsAPI* TransactionsAPI = nullptr;
 };

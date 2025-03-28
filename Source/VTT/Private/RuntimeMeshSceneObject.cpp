@@ -26,3 +26,29 @@
 */
 
 #include "RuntimeMeshSceneObject.h"
+
+#include "DynamicMesh/DynamicMesh3.h"
+#include "DynamicMesh/DynamicMeshAABBTree3.h"
+
+#include "MaterialDomain.h"
+
+URuntimeMeshSceneObject::URuntimeMeshSceneObject()
+{
+	if (!SourceMesh)
+	{
+		SourceMesh = MakeUnique<UE::Geometry::FDynamicMesh3>();
+	}
+	if (!MeshAABBTree)
+	{
+		MeshAABBTree = MakeUnique<UE::Geometry::FDynamicMeshAABBTree3>();
+	}
+
+	UMaterialInterface* DefaultMaterial = UMaterial::GetDefaultMaterial(MD_Surface);
+	Materials.Add(DefaultMaterial);
+}
+
+void URuntimeMeshSceneObject::Initialize(UWorld* TargetWorld, const FMeshDescription* InitialMeshDescription)
+{
+	FActorSpawnParameters SpawnInfo;
+	//==>
+}

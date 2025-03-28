@@ -29,6 +29,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "DynamicMesh/DynamicMeshAABBTree3.h"
 
 #include "RuntimeMeshSceneObject.generated.h"
 
@@ -48,5 +50,19 @@ class VTT_API URuntimeMeshSceneObject : public UObject
 {
 
 	GENERATED_BODY()
-	
+
+public:
+	URuntimeMeshSceneObject();
+
+	void Initialize(UWorld* TargetWorld, const FMeshDescription* InitialMeshDescription);
+
+protected:
+	// URuntimeMeshSceneObject's representation in UE Level is ADynamic SDMCActor
+	//UPROPERTY()
+	//ADynamicSDMCActor<==
+
+	TUniquePtr<UE::Geometry::FDynamicMesh3> SourceMesh;
+	TUniquePtr<UE::Geometry::FDynamicMeshAABBTree3> MeshAABBTree;
+
+	TArray<UMaterialInterface*> Materials;
 };

@@ -30,6 +30,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "InteractiveToolsContext.h"
+#include "RuntimeMeshSceneObject.h"
 
 #include "RuntimeMeshSceneSubsystem.generated.h"
 
@@ -62,9 +63,18 @@ public:
 	virtual void SetCurrentTransactionsAPI(IToolsContextTransactionsAPI* TransactionsAPI);
 
 public:
+
+	UFUNCTION(BlueprintCallable, Category="URuntimeMeshSceneSubsystem")
+	TArray<URuntimeMeshSceneObject*> GetSelection() const {	return SelectedSceneObjects;	}
+
+public:
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FMeshSceneSelectionChangedEvent, URuntimeMeshSceneSubsystem*)
 	FMeshSceneSelectionChangedEvent OnSelectionModified;
 
 protected:
 	IToolsContextTransactionsAPI* TransactionsAPI = nullptr;
+
+	UPROPERTY()
+	TArray<URuntimeMeshSceneObject*> SelectedSceneObjects;
 };

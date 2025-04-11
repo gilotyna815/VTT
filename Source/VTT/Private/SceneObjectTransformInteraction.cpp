@@ -36,6 +36,6 @@ void USceneObjectTransformInteraction::Initialize(TUniqueFunction<bool()> GizmoE
 
 	SelectionChangedEventHandle = URuntimeMeshSceneSubsystem::Get()->OnSelectionModified.AddLambda([this](URuntimeMeshSceneSubsystem* SceneSubsystem)
 	{
-		//==>
+		// UpdateGizmoTargets(SceneSubsystem->GetSelection()); // <==
 	});
 }

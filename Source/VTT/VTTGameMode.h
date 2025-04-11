@@ -50,7 +50,6 @@ public:
 	virtual void StartPlay() override;
 
 	virtual void InitializeToolsSystem();
-	
 	virtual void RegisterTools();
 
 	virtual void Tick(float DeltaTime) override;

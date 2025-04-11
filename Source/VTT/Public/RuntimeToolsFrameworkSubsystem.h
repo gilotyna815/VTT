@@ -34,7 +34,7 @@
 #include "ToolsContextRenderComponent.h"
 #include "SceneHistoryManager.h"
 //#include "Interaction/SceneObjectSelectionInteraction.h"
-//#include "Interaction/SceneObjectTransformInteraction.h"
+#include "SceneObjectTransformInteraction.h"
 
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
 
@@ -47,7 +47,7 @@ class VTT_API URuntimeToolsFrameworkSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 	//
-	// Small hack to workaround the fact that you generally need the UGameInstance pointer to look up a GameInstance subsystem. We store the pointer abd then allow ::Get() to return it (ie actually a singleton)
+	// Small hack to workaround the fact that you generally need the UGameInstance pointer to look up a GameInstance subsystem. We store the pointer and then allow ::Get() to return it (ie actually a singleton)
 	//
 public:
 	static void InitializeSingleton(URuntimeToolsFrameworkSubsystem* Subsystem);
@@ -56,25 +56,25 @@ protected:
 	static URuntimeToolsFrameworkSubsystem* InstanceSingleton;
 
 	//
+	// Functions to setup/shutdown/operate the RuntimeToolsFramework
+	//
+public:
+	void InitializeToolsContext(UWorld* TargetWorld); // <==
+	virtual void Tick(float DeltaTime);
+	void ShutdownToolsContext();
+
+	//
 	// UGameInstanceSubsystem API implementation
 	//
 public:
 	virtual void Deinitialize() override;
 
 	//
-	// Functions to setup/shutdown/operate the RuntimeToolsFramework
-	//
-public:
-	void InitializeToolsContext(UWorld* TargetWorld);
-	virtual void Tick(float DeltaTime);
-	void ShutdownToolsContext();
-
-	//
 	// Access to various data structures created/tracked by the Subsystem
 	//
 
 	UFUNCTION(BlueprintCallable)
-	USceneHistoryManager* GetSceneHistory() { return SceneHistory;	} //<==
+	USceneHistoryManager* GetSceneHistory() { return SceneHistory;	}
 
 	//
 	// Tool creation/management BP API
@@ -89,6 +89,9 @@ public:
 
 	UPROPERTY()
 	UInteractiveToolsContext* ToolsContext;
+
+	UPROPERTY()
+	USceneObjectTransformInteraction* TransformInteraction; // <==
 
 	UPROPERTY()
 	USceneHistoryManager* SceneHistory;

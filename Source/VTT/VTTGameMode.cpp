@@ -63,13 +63,13 @@ void AVTTGameMode::InitializeToolsSystem()
 	SceneSystem = UGameInstance::GetSubsystem<URuntimeMeshSceneSubsystem>(GameInstance);
 
 	// create Tools subsystem
-	ToolsSystem = UGameInstance::GetSubsystem<URuntimeToolsFrameworkSubsystem>(GameInstance);
+	ToolsSystem = UGameInstance::GetSubsystem<URuntimeToolsFrameworkSubsystem>(GameInstance); // <==
 
 	check(SceneSystem && ToolsSystem);
 
 	// initialize Tools and Scene systems
 	ToolsSystem->InitializeToolsContext(World);
-	//SceneSystem->SetCurrentTransactionsAPI(); //<==
+	//SceneSystem->SetCurrentTransactionsAPI();
 }
 
 void AVTTGameMode::Tick(float DeltaTime)

@@ -45,7 +45,7 @@ URuntimeToolsFrameworkSubsystem* URuntimeToolsFrameworkSubsystem::Get()
 
 void URuntimeToolsFrameworkSubsystem::Deinitialize()
 {
-	ShutdownToolsContext(); //<==
+	ShutdownToolsContext();
 
 	InstanceSingleton = nullptr;
 }
@@ -56,7 +56,7 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 
 	ToolsContext = NewObject<UInteractiveToolsContext>();
 
-	//==>
+	// <==
 }
 
 //UE_DISABLE_OPTIMIZATION
@@ -73,9 +73,7 @@ void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()
 	{
 		CancelOrCompleteActiveTool();
 
-		
-
-		//==>
+		// TransformInteraction->Shutdown(); // <==
 	}
 }
 

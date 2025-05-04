@@ -33,7 +33,7 @@
 
 class UTransformProxy;
 class UCombinedTransformGizmo;
-class RuntimeMeshSceneObject;
+class URuntimeMeshSceneObject;
 
 /**
  * USceneObjectTransformInteraction manages a 3D Translate/Rotate/Scale (TRS) Gizmo for the
@@ -62,6 +62,14 @@ public:
 protected:
 
 	FDelegateHandle SelectionChangedEventHandle;
+
+	UPROPERTY()
+	UTransformProxy* TransformProxy;
+
+	UPROPERTY()
+	UCombinedTransformGizmo* TransformGizmo;
+
+	void UpdateGizmoTargets(const TArray<URuntimeMeshSceneObject*>& Selection);
 
 	TUniqueFunction<bool()> GizmoEnabledCallback = [&]() { return true; };
 	

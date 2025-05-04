@@ -52,3 +52,9 @@ void URuntimeMeshSceneObject::Initialize(UWorld* TargetWorld, const FMeshDescrip
 	FActorSpawnParameters SpawnInfo;
 	//==>
 }
+
+UMeshComponent* URuntimeMeshSceneObject::GetMeshComponent()
+{
+	//==>
+	return nullptr; // delete
+}

@@ -25,10 +25,12 @@
  * SOFTWARE.
 */
 
-
 #include "SceneObjectTransformInteraction.h"
 
 #include "RuntimeMeshSceneSubsystem.h"
+#include "RuntimeToolsFrameworkSubsystem.h"
+
+#include "BaseGizmos/TransformProxy.h"
 
 void USceneObjectTransformInteraction::Initialize(TUniqueFunction<bool()> GizmoEnabledCallbackIn)
 {
@@ -36,6 +38,32 @@ void USceneObjectTransformInteraction::Initialize(TUniqueFunction<bool()> GizmoE
 
 	SelectionChangedEventHandle = URuntimeMeshSceneSubsystem::Get()->OnSelectionModified.AddLambda([this](URuntimeMeshSceneSubsystem* SceneSubsystem)
 	{
-		// UpdateGizmoTargets(SceneSubsystem->GetSelection()); // <==
+		UpdateGizmoTargets(SceneSubsystem->GetSelection());
 	});
+}
+
+void USceneObjectTransformInteraction::UpdateGizmoTargets(const TArray<URuntimeMeshSceneObject*>& Selection)
+{
+	UInteractiveGizmoManager* GizmoManager = URuntimeToolsFrameworkSubsystem::Get()->ToolsContext->GizmoManager;
+
+	// destroy existing gizmos if we have any
+	if (TransformGizmo != nullptr)
+	{
+		GizmoManager->DestroyAllGizmosByOwner(this);
+		TransformGizmo = nullptr;
+		TransformProxy = nullptr;
+	}
+
+	// if no selection, no gizmo
+	if (Selection.Num() == 0 || GizmoEnabledCallback() == false)
+	{
+		return;
+	}
+
+	TransformProxy = NewObject<UTransformProxy>(this);
+	for (URuntimeMeshSceneObject* SceneObject : Selection)
+	{
+		// would be nice if it worked on Actors...
+		TransformProxy->AddComponent(SceneObject->GetMeshComponent()); // <==
+	}
 }

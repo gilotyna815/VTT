@@ -56,10 +56,13 @@ public:
 
 	void Initialize(UWorld* TargetWorld, const FMeshDescription* InitialMeshDescription);
 
+	// get the mesh component that represents this scene object
+	UMeshComponent* GetMeshComponent();
+
 protected:
 	// URuntimeMeshSceneObject's representation in UE Level is ADynamic SDMCActor
 	//UPROPERTY()
-	//ADynamicSDMCActor<==
+	//ADynamicSDMCActor <==
 
 	TUniquePtr<UE::Geometry::FDynamicMesh3> SourceMesh;
 	TUniquePtr<UE::Geometry::FDynamicMeshAABBTree3> MeshAABBTree;

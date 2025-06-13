@@ -25,35 +25,4 @@
  * SOFTWARE.
 */
 
-#include "DynamicMeshBaseActor.h"
-
-using namespace UE::Geometry;
-
-// Sets default values
-ADynamicMeshBaseActor::ADynamicMeshBaseActor()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	AccumulatedTime = 0;
-	MeshAABBTree.SetMesh(&SourceMesh);
-
-	FastWinding = MakeUnique<TFastWindingTree<FDynamicMesh3>>(&MeshAABBTree, false);
-
-	MeshPool = CreateDefaultSubobject<UGeneratedMeshPool>(TEXT("MeshPool"));
-}
-
-// Called when the game starts or when spawned
-void ADynamicMeshBaseActor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ADynamicMeshBaseActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
+#include "GeneratedMeshPool.h"

@@ -32,6 +32,7 @@
 #include "DynamicMesh/DynamicMesh3.h"
 #include "DynamicMesh/DynamicMeshAABBTree3.h"
 #include "Spatial/FastWinding.h"
+#include "GeneratedMeshPool.h"
 
 #include "DynamicMeshBaseActor.generated.h"
 
@@ -99,7 +100,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	//UPROPERTY(Transient)
-	//UGeneratedMeshPool* <==
+	UPROPERTY(Transient)
+	UGeneratedMeshPool* MeshPool = nullptr;
 
 };

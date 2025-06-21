@@ -29,14 +29,20 @@
 
 #include "CoreMinimal.h"
 #include "DynamicMeshBaseActor.h"
+#include <Runtime/GeometryFramework/Public/Components/DynamicMeshComponent.h>
+
 #include "DynamicSDMCActor.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class VTT_API ADynamicSDMCActor : public ADynamicMeshBaseActor
 {
 	GENERATED_BODY()
-	
+
+public:
+	// sets default values for this actor's properties
+	ADynamicSDMCActor();
+
+public:
+	UPROPERTY(VisibleAnywhere)
+	UDynamicMeshComponent* MeshComponent = nullptr;
 };

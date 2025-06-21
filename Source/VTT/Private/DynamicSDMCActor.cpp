@@ -27,3 +27,7 @@
 
 #include "DynamicSDMCActor.h"
 
+ADynamicSDMCActor::ADynamicSDMCActor()
+{
+	MeshComponent = CreateDefaultSubobject<UDynamicMeshComponent>(TEXT("MeshComponent"), false);
+}

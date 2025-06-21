@@ -39,10 +39,14 @@ class VTT_API ADynamicSDMCActor : public ADynamicMeshBaseActor
 	GENERATED_BODY()
 
 public:
-	// sets default values for this actor's properties
+	// Sets default values for this actor's properties
 	ADynamicSDMCActor();
 
 public:
 	UPROPERTY(VisibleAnywhere)
 	UDynamicMeshComponent* MeshComponent = nullptr;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 };

@@ -27,7 +27,15 @@
 
 #include "DynamicSDMCActor.h"
 
+// Sets default values
 ADynamicSDMCActor::ADynamicSDMCActor()
 {
 	MeshComponent = CreateDefaultSubobject<UDynamicMeshComponent>(TEXT("MeshComponent"), false);
+	SetRootComponent(MeshComponent);
+}
+
+// Called when the game starts or when spawned
+void ADynamicSDMCActor::BeginPlay()
+{
+	Super::BeginPlay();
 }

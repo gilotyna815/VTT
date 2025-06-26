@@ -39,3 +39,9 @@ void ADynamicSDMCActor::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+// Called every frame
+void ADynamicSDMCActor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}

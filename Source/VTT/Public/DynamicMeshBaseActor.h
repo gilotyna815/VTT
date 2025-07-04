@@ -37,6 +37,33 @@
 #include "DynamicMeshBaseActor.generated.h"
 
 /**
+ * Source of mesh used to initialize ADynamicMeshBaseActor
+ */
+UENUM(BlueprintType)
+enum class EDynamicMeshActorSourceType : uint8
+{
+	// Initialize the mesh with a generated 3D primitive shape (box, sphere, etc)
+	Primitive,
+	// Initialize the mesh by importing an external mesh file (OBJ format)
+	ImportedMesh,
+	// Do not initialize the mesh, allow an external source (eg a Constructor Script) to initialize it
+	ExternallyGenerated
+};
+
+UENUM(BlueprintType)
+enum class EDynamicMeshActorCollisionMode : uint8
+{
+	// No auto-generated collision
+	NoCollision,
+	// Complex Collision generated directly from the triangle mesh
+	ComplexAsSimple,
+	// Complex Collision generated directly from the triangle mesh, but computed asynchronously (so not immediately available)
+	ComplexAsSimpleAsync,
+	// Simple Collision initialized by a single Convex Hull fit to the entire triangle mesh
+	SimpleConvexHull
+};
+
+/**
  * ADynamicMeshBaseActor is a base class for Actors that support being
  * rebuilt in-game after mesh editing operations. The base Actor itself
  * does not have any Components, it should be used via one of the
@@ -78,6 +105,10 @@ public:
 	// Sets default values for this actor's properties
 	ADynamicMeshBaseActor();
 
+	// Type of mesh used to initialize this Actor - either a generated mesh Primitive, or an Imported OBJ file
+	UPROPERTY(EditAnywhere, Category = "DynamicMeshActor")
+	EDynamicMeshActorSourceType SourceType = EDynamicMeshActorSourceType::Primitive;
+
 	//
 	// ADynamicMeshBaseActor API
 	//
@@ -112,6 +143,14 @@ protected:
 	FDynamicMeshAABBTree3 MeshAABBTree;
 	// This FastWindingTree is updated each time SourceMesh is modified if bEnableInsideQueries = true
 	TUniquePtr<UE::Geometry::TFastWindingTree<FDynamicMesh3>> FastWinding;
+
+	//
+	// Support for Runtime-Generated Collision
+	//
+public:
+	// Auto-Generated Collision Mode for this Actor (currently only works with DynamicPMCActor subclass
+	UPROPERTY(EditAnywhere, Category = "DynamicMeshActor|RuntimeCollision")
+	EDynamicMeshActorCollisionMode CollisionMode = EDynamicMeshActorCollisionMode::NoCollision;
 
 	//
 	// ADynamicMeshBaseActor API that subclasses must implement.

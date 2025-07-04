@@ -78,6 +78,18 @@ public:
 	// Sets default values for this actor's properties
 	ADynamicMeshBaseActor();
 
+	//
+	// ADynamicMeshBaseActor API
+	//
+public:
+	// Call EditMesh() to safely modify the SourceMesh owned by this Actor. Your EditFunc will be called with the CurrentSourceMesh as argument, and you are expected to pass back the new.modified version.
+	// If you are generating an entirely new mesh, MoveTemp can be used to do this without a copy.
+	virtual void EditMesh(TFunctionRef<void(FDynamicMesh3&)> EditFunc);
+
+	//This deletage is broadcast whenever the internal SourceMesh is updated.
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnMeshModified, ADynamicMeshBaseActor*);
+	FOnMeshModified OnMeshModified;
+
 protected:
 	/** The SourceMesh used to initialize the mesh components in the various subclasses */
 	FDynamicMesh3 SourceMesh;
@@ -85,12 +97,32 @@ protected:
 	/** Accumulated time since Actor was created, this is used for the animated primitives when bRegenerateOnTick = true */
 	double AccumulatedTime = 0;
 
+	//
+	// Support for AABBTree / Spatial Queries
+	//
+public:
+	UPROPERTY(EditAnywhere, Category = "DynamicMeshActor|SpatialQueries")
+	bool bEnableSpatialQueries = false;
+
+	UPROPERTY(EditAnywhere, Category = "DynamicMeshActor|SpatialQueries")
+	bool bEnableInsideQueries = false;
+
 protected:
 	// This AABBTree is updated each time SourceMesh is modified if bEnableSpatialQueries = true or bEnableInsideQueries = true
 	FDynamicMeshAABBTree3 MeshAABBTree;
 	// This FastWindingTree is updated each time SourceMesh is modified if bEnableInsideQueries = true
 	TUniquePtr<UE::Geometry::TFastWindingTree<FDynamicMesh3>> FastWinding;
 
+	//
+	// ADynamicMeshBaseActor API that subclasses must implement.
+	//
+protected:
+	//Called when the SourceMesh has been modified. Subclasses override this function to update their respective Component with the new SourceMesh.
+	virtual void OnMeshEditedInternal();
+
+	//
+	// Standard UE Actor Callbacks. If you need to override these functions, make sure to call (eg) Super::Tick() or you will break the mesh updating functionality!
+	//
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

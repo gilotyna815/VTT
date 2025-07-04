@@ -43,6 +43,28 @@ ADynamicMeshBaseActor::ADynamicMeshBaseActor()
 	MeshPool = CreateDefaultSubobject<UGeneratedMeshPool>(TEXT("MeshPool"));
 }
 
+void ADynamicMeshBaseActor::EditMesh(TFunctionRef<void(FDynamicMesh3&)> EditFunc)
+{
+	EditFunc(SourceMesh);
+
+	// update spatial data structures
+	if (bEnableSpatialQueries || bEnableInsideQueries)
+	{
+		MeshAABBTree.Build();
+		if (bEnableInsideQueries)
+		{
+			FastWinding->Build();
+		}
+	}
+
+	OnMeshEditedInternal();
+}
+
+void ADynamicMeshBaseActor::OnMeshEditedInternal()
+{
+	OnMeshModified.Broadcast(this);
+}
+
 // Called when the game starts or when spawned
 void ADynamicMeshBaseActor::BeginPlay()
 {

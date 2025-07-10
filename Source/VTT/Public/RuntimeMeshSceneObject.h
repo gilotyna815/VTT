@@ -31,8 +31,11 @@
 #include "UObject/NoExportTypes.h"
 #include "DynamicMesh/DynamicMesh3.h"
 #include "DynamicMesh/DynamicMeshAABBTree3.h"
+#include "DynamicSDMCActor.h"
 
 #include "RuntimeMeshSceneObject.generated.h"
+
+struct FMeshDescription;
 
 /**
  * URuntimeMeshSceneObject is a "Scene Object" in the "Scene". Do not create these yourself.
@@ -55,17 +58,27 @@ public:
 	URuntimeMeshSceneObject();
 
 	void Initialize(UWorld* TargetWorld, const FMeshDescription* InitialMeshDescription);
+	void Initialize(UWorld* TargetWorld, const FDynamicMesh3* InitialMesh);
+
+	// get the Actor that represents this SceneObject
+	ADynamicMeshBaseActor* GetActor();
 
 	// get the mesh component that represents this scene object
 	UMeshComponent* GetMeshComponent();
 
 protected:
-	// URuntimeMeshSceneObject's representation in UE Level is ADynamic SDMCActor
-	//UPROPERTY()
-	//ADynamicSDMCActor <==
+	// URuntimeMeshSceneObject's representation in UE Level is ADynamicSDMCActor
+	UPROPERTY()
+	ADynamicSDMCActor* SimpleDynamicMeshActor = nullptr;
 
 	TUniquePtr<UE::Geometry::FDynamicMesh3> SourceMesh;
 	TUniquePtr<UE::Geometry::FDynamicMeshAABBTree3> MeshAABBTree;
 
+	void UpdateSourceMesh(const FMeshDescription* MeshDescription);
+
+	void OnExternalDynamicMeshComponentUpdate();
+
 	TArray<UMaterialInterface*> Materials;
+
+	void UpdateComponentMaterials(bool bForceRefresh);
 };

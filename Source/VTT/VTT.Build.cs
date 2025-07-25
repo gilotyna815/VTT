@@ -8,6 +8,6 @@ public class VTT : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "DynamicMesh", "Engine", "EnhancedInput", "GeometryCore", "GeometryFramework", "InputCore", "InteractiveToolsFramework", "MeshConversion" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "EnhancedInput", "GeometryCore", "DynamicMesh", "GeometryFramework", "MeshConversion", "InputCore", "InteractiveToolsFramework" });
 	}
 }

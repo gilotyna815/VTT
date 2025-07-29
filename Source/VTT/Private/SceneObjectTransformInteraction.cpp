@@ -31,6 +31,7 @@
 #include "RuntimeToolsFrameworkSubsystem.h"
 
 #include "BaseGizmos/TransformProxy.h"
+#include "BaseGizmos/TransformGizmoUtil.h"
 
 void USceneObjectTransformInteraction::Initialize(TUniqueFunction<bool()> GizmoEnabledCallbackIn)
 {
@@ -40,6 +41,21 @@ void USceneObjectTransformInteraction::Initialize(TUniqueFunction<bool()> GizmoE
 	{
 		UpdateGizmoTargets(SceneSubsystem->GetSelection());
 	});
+}
+
+void USceneObjectTransformInteraction::Shutdown()
+{
+	if (SelectionChangedEventHandle.IsValid())
+	{
+		if (URuntimeMeshSceneSubsystem::Get())
+		{
+			URuntimeMeshSceneSubsystem::Get()->OnSelectionModified.Remove(SelectionChangedEventHandle);
+		}
+		SelectionChangedEventHandle = FDelegateHandle();
+	}
+
+	TArray<URuntimeMeshSceneObject*> EmptySelection;
+	UpdateGizmoTargets(EmptySelection);
 }
 
 void USceneObjectTransformInteraction::UpdateGizmoTargets(const TArray<URuntimeMeshSceneObject*>& Selection)
@@ -64,6 +80,23 @@ void USceneObjectTransformInteraction::UpdateGizmoTargets(const TArray<URuntimeM
 	for (URuntimeMeshSceneObject* SceneObject : Selection)
 	{
 		// would be nice if it worked on Actors...
-		TransformProxy->AddComponent(SceneObject->GetMeshComponent()); // <==
+		TransformProxy->AddComponent(SceneObject->GetMeshComponent());
 	}
+
+	ETransformGizmoSubElements GizmoElements = ETransformGizmoSubElements::FullTranslateRotateScale;
+	if (bEnableScaling == false)
+	{
+		GizmoElements = ETransformGizmoSubElements::StandardTranslateRotate;
+	}
+	else if (bEnableNonUniformScaling == false || Selection.Num() > 1) // cannot nonuniform-scale multiple objects
+	{
+		GizmoElements = ETransformGizmoSubElements::TranslateRotateUniformScale;
+	}
+
+	TransformGizmo = UE::TransformGizmoUtil::CreateCustomTransformGizmo(GizmoManager, GizmoElements, this);
+	TransformGizmo->SetActiveTarget(TransformProxy);
+
+	// optionally ignore coordinate system setting
+	//TransformGizmo->bUseContextCoordinateSystem = false;
+	//TransformGizmo->CurrentCoordinateSystem = EToolContextCoordinateSystem::Local;
 }

@@ -59,6 +59,8 @@ public:
 	 */
 	void Initialize(TUniqueFunction<bool()> GizmoEnabledCallbackIn);
 
+	void Shutdown();
+
 protected:
 
 	FDelegateHandle SelectionChangedEventHandle;
@@ -70,7 +72,9 @@ protected:
 	UCombinedTransformGizmo* TransformGizmo;
 
 	void UpdateGizmoTargets(const TArray<URuntimeMeshSceneObject*>& Selection);
+	
+	bool bEnableScaling = true;
+	bool bEnableNonUniformScaling = true;
 
 	TUniqueFunction<bool()> GizmoEnabledCallback = [&]() { return true; };
-	
 };

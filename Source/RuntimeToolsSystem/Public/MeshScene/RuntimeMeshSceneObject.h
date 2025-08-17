@@ -49,7 +49,7 @@ struct FMeshDescription;
  * of those details.
  */
 UCLASS()
-class VTT_API URuntimeMeshSceneObject : public UObject
+class RUNTIMETOOLSSYSTEM_API URuntimeMeshSceneObject : public UObject
 {
 
 	GENERATED_BODY()

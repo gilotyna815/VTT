@@ -27,8 +27,8 @@
 
 #include "VTTGameMode.h"
 
-#include "RuntimeToolsFrameworkSubsystem.h"
-#include "RuntimeMeshSceneSubsystem.h"
+#include "RuntimeToolsSystem/Public/RuntimeToolsFramework/RuntimeToolsFrameworkSubsystem.h"
+#include "RuntimeToolsSystem/Public/MeshScene/RuntimeMeshSceneSubsystem.h"
 //
 //#include "AddPrimitiveTool.h"
 //#include "DrawAndRevolveTool.h"

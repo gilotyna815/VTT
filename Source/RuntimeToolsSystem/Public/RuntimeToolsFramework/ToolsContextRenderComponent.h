@@ -29,6 +29,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/PrimitiveComponent.h"
+
 #include "ToolsContextRenderComponent.generated.h"
 
 class FPrimitiveDrawInterface;
@@ -47,7 +48,7 @@ class FPrimitiveDrawInterface;
  * to be batched, providing much better performance.
  */
 UCLASS()
-class VTT_API UToolsContextRenderComponent : public UPrimitiveComponent
+class RUNTIMETOOLSSYSTEM_API UToolsContextRenderComponent : public UPrimitiveComponent
 {
 	GENERATED_BODY()
 

@@ -27,8 +27,8 @@
 
 #include "SceneObjectTransformInteraction.h"
 
-#include "RuntimeMeshSceneSubsystem.h"
-#include "RuntimeToolsFrameworkSubsystem.h"
+#include "MeshScene/RuntimeMeshSceneSubsystem.h"
+#include "RuntimeToolsFramework/RuntimeToolsFrameworkSubsystem.h"
 
 #include "BaseGizmos/TransformProxy.h"
 #include "BaseGizmos/TransformGizmoUtil.h"

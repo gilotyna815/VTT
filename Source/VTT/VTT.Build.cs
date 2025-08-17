@@ -6,8 +6,15 @@ public class VTT : ModuleRules
 {
 	public VTT(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "DynamicMesh", "Engine", "EnhancedInput", "GeometryCore", "GeometryFramework", "InputCore", "InteractiveToolsFramework", "MeshConversion", "RuntimeGeometryUtils" });
-	}
+        PublicDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "EnhancedInput",
+            "InteractiveToolsFramework",
+            "RuntimeToolsSystem"
+        });
+    }
 }

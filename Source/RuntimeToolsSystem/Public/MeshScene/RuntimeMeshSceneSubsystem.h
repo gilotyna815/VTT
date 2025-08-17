@@ -30,7 +30,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "InteractiveToolsContext.h"
-#include "RuntimeMeshSceneObject.h"
+#include "MeshScene/RuntimeMeshSceneObject.h"
 
 #include "RuntimeMeshSceneSubsystem.generated.h"
 
@@ -45,7 +45,7 @@
  * Cast rays into the scene using FindNearestHitObject()
  */
 UCLASS()
-class VTT_API URuntimeMeshSceneSubsystem : public UGameInstanceSubsystem
+class RUNTIMETOOLSSYSTEM_API URuntimeMeshSceneSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 	

@@ -47,7 +47,7 @@ class URuntimeMeshSceneObject;
  * See UTransformMeshesTool for sample code for doing things like modifying pivot dynamically/etc.
  */
 UCLASS()
-class VTT_API USceneObjectTransformInteraction : public UObject
+class RUNTIMETOOLSSYSTEM_API USceneObjectTransformInteraction : public UObject
 {
 	GENERATED_BODY()
 

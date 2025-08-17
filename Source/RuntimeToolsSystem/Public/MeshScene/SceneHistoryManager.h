@@ -35,7 +35,7 @@
  * 
  */
 UCLASS()
-class VTT_API USceneHistoryManager : public UObject
+class RUNTIMETOOLSSYSTEM_API USceneHistoryManager : public UObject
 {
 	GENERATED_BODY()
 	

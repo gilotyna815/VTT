@@ -32,17 +32,20 @@
 #include "InteractiveToolsContext.h"
 
 #include "ToolsContextRenderComponent.h"
-#include "SceneHistoryManager.h"
+#include "MeshScene/SceneHistoryManager.h"
 //#include "Interaction/SceneObjectSelectionInteraction.h"
-#include "SceneObjectTransformInteraction.h"
+#include "Interaction/SceneObjectTransformInteraction.h"
 
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
+
+class FRuntimeToolsContextQueriesImpl;
+class AToolsContextActor;
 
 /**
  *
  */
 UCLASS()
-class VTT_API URuntimeToolsFrameworkSubsystem : public UGameInstanceSubsystem
+class RUNTIMETOOLSSYSTEM_API URuntimeToolsFrameworkSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
@@ -90,13 +93,18 @@ public:
 	UPROPERTY()
 	UInteractiveToolsContext* ToolsContext;
 
+	//UPROPERTY()
+	//AToolsContextActor* ContextActor;
+
 	UPROPERTY()
-	USceneObjectTransformInteraction* TransformInteraction; // <==
+	USceneObjectTransformInteraction* TransformInteraction;
 
 	UPROPERTY()
 	USceneHistoryManager* SceneHistory;
 
 protected:
+	TSharedPtr<FRuntimeToolsContextQueriesImpl> ContextQueriesAPI;
+	
 	bool bIsShuttingDown = false;
 	void InternalConsistencyChecks();
 

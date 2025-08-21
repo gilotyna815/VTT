@@ -37,6 +37,7 @@
 
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
 
+class AToolsContextActor;
 /**
  *
  */
@@ -61,6 +62,7 @@ public:
 	void InitializeToolsContext(UWorld* TargetWorld); // <==
 	virtual void Tick(float DeltaTime);
 	void ShutdownToolsContext();
+	void SetContextActor(AToolsContextActor* ActorIn);
 
 	//
 	// UGameInstanceSubsystem API implementation
@@ -91,6 +93,7 @@ public:
 
 	UPROPERTY()
 	USceneObjectTransformInteraction* TransformInteraction; // <==
+	AToolsContextActor* ContextActor;
 
 	UPROPERTY()
 	USceneHistoryManager* SceneHistory;

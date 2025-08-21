@@ -74,6 +74,13 @@ void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()
 		CancelOrCompleteActiveTool();
 
 		// TransformInteraction->Shutdown(); // <==
+
+void URuntimeToolsFrameworkSubsystem::SetContextActor(AToolsContextActor* ActorIn)
+{
+	ContextActor = ActorIn;
+	if (ContextQueriesAPI)
+	{
+		ContextQueriesAPI->SetContextActor(ContextActor);
 	}
 }
 

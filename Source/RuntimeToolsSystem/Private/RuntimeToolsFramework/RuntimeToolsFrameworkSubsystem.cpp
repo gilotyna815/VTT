@@ -25,7 +25,7 @@
  * SOFTWARE.
 */
 
-#include "RuntimeToolsFrameworkSubsystem.h"
+#include "RuntimeToolsFramework/RuntimeToolsFrameworkSubsystem.h"
 
 #include "ToolContextInterfaces.h"
 

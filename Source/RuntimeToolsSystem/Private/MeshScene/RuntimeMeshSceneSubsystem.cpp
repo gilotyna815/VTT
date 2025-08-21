@@ -25,7 +25,7 @@
  * SOFTWARE.
 */
 
-#include "RuntimeMeshSceneSubsystem.h"
+#include "MeshScene/RuntimeMeshSceneSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "URuntimeMeshSceneSubsystem"
 

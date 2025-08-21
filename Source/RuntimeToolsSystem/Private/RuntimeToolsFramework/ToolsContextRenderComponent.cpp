@@ -25,7 +25,7 @@
  * SOFTWARE.
 */
 
-#include "ToolsContextRenderComponent.h"
+#include "RuntimeToolsFramework/ToolsContextRenderComponent.h"
 #include "PrimitiveSceneProxy.h"
 
 // SceneProxy for UToolsContextRenderComponent. Just uses the PDI's available in GetDynamicMeshElements to draw the lines/points accumulated by the component.

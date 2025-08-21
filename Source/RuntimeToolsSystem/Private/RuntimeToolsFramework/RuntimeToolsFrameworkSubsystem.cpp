@@ -29,32 +29,6 @@
 
 #include "ToolContextInterfaces.h"
 
-#include "BaseGizmos/TransformGizmoUtil.h"
-
-//#include "RuntimeModelingObjectsCreationAPI.h"
-
-class FRuntimeToolsContextQueriesImpl : public IToolsContextQueriesAPI
-{
-public:
-	FRuntimeToolsContextQueriesImpl(UInteractiveToolsContext* InContext, UWorld* InWorld)
-	{
-		ToolsContext = InContext;
-		TargetWorld = InWorld;
-	}
-
-	virtual void SetContextActor(AToolsContextActor* ContextActorIn)
-	{
-		ContextActor = ContextActorIn;
-	}
-
-protected:
-	UInteractiveToolsContext* ToolsContext;
-	UWorld* TargetWorld;
-	AToolsContextActor* ContextActor = nullptr;
-};
-
-
-
 URuntimeToolsFrameworkSubsystem* URuntimeToolsFrameworkSubsystem::InstanceSingleton = nullptr;
 
 void URuntimeToolsFrameworkSubsystem::InitializeSingleton(URuntimeToolsFrameworkSubsystem* Subsystem)
@@ -82,8 +56,7 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 
 	ToolsContext = NewObject<UInteractiveToolsContext>();
 
-	// ==> ContextQueriesAPI = MakeShared<FRuntimeToolsContextQueriesImpl>(ToolsContext, TargetWorld);
-	// ==>
+	// <==
 }
 
 //UE_DISABLE_OPTIMIZATION
@@ -100,14 +73,7 @@ void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()
 	{
 		CancelOrCompleteActiveTool();
 
-		// first you need to implement initialization, THEN deinitialization, silly ;P
-		// ==>
-
-		//TransformInteraction->Shutdown(); // also crashes the engine??? <==
-
-		// unregister transform gizmo helper
-		//UE::TransformGizmoUtil::DeregisterTransformGizmoContextObject(ToolsContext); // crashes the engine oops <==
-
+		// TransformInteraction->Shutdown(); // <==
 	}
 }
 

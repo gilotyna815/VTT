@@ -33,13 +33,9 @@
 
 #include "ToolsContextRenderComponent.h"
 #include "MeshScene/SceneHistoryManager.h"
-//#include "Interaction/SceneObjectSelectionInteraction.h"
 #include "Interaction/SceneObjectTransformInteraction.h"
 
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
-
-class FRuntimeToolsContextQueriesImpl;
-class AToolsContextActor;
 
 /**
  *
@@ -77,7 +73,7 @@ public:
 	//
 
 	UFUNCTION(BlueprintCallable)
-	USceneHistoryManager* GetSceneHistory() { return SceneHistory;	}
+	USceneHistoryManager* GetSceneHistory() { return SceneHistory; }
 
 	//
 	// Tool creation/management BP API
@@ -93,20 +89,14 @@ public:
 	UPROPERTY()
 	UInteractiveToolsContext* ToolsContext;
 
-	//UPROPERTY()
-	//AToolsContextActor* ContextActor;
-
 	UPROPERTY()
-	USceneObjectTransformInteraction* TransformInteraction;
+	USceneObjectTransformInteraction* TransformInteraction; // <==
 
 	UPROPERTY()
 	USceneHistoryManager* SceneHistory;
 
 protected:
-	TSharedPtr<FRuntimeToolsContextQueriesImpl> ContextQueriesAPI;
-	
 	bool bIsShuttingDown = false;
 	void InternalConsistencyChecks();
 
-	
 };

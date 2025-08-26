@@ -28,3 +28,41 @@
 
 #include "MeshScene/SceneHistoryManager.h"
 
+bool FChangeHistoryTransaction::HasExpired() const
+{
+	for (const FChangeHistoryRecord& Record : Records)
+	{
+		if (Record.ChangeWrapper->Change->HasExpired(Record.TargetObject) == false)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+void USceneHistoryManager::BeginTransaction(const FText& Description)
+{
+	if (BeginTransactionDepth != 0)
+	{
+		BeginTransactionDepth++;
+	}
+	else
+	{
+		TruncateHistory();
+
+		ActiveTransaction = FChangeHistoryTransaction();
+		ActiveTransaction.Descritpion = Description;
+
+		BeginTransactionDepth++;
+	}
+}
+
+void USceneHistoryManager::TruncateHistory()
+{
+	// truncate history if we are in undo step
+	if (CurrentIndex < Transactions.Num())
+	{
+		Transactions.SetNum(CurrentIndex);
+	}
+}
+

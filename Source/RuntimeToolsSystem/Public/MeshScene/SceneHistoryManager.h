@@ -92,6 +92,12 @@ public:
 	/** Open a new Transaction, ie list of (UObject, FCommandChange) pairs */
 	void BeginTransaction(const FText& Description);
 
+	/** Append a Change to the open Transaction */
+	void AppendChange(UObject* TargetObject, TUniquePtr<FCommandChange> Change, const FText& Description);
+
+	/** Close the current Transaction and add it to the History sequence */
+	void EndTransaction();
+
 	/** @return true if we are inside an open Transaction */
 	UFUNCTION(BlueprintCallable)
 	bool IsBuildingTransaction() const { return BeginTransactionDepth > 0; }

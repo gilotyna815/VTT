@@ -57,6 +57,54 @@ void USceneHistoryManager::BeginTransaction(const FText& Description)
 	}
 }
 
+void USceneHistoryManager::AppendChange(UObject* TargetObject, TUniquePtr<FCommandChange> Change, const FText& Description)
+{
+	bool bAutoCloseTransaction = false;
+	if (ensure(BeginTransactionDepth > 0) == false)
+	{
+		BeginTransaction(Description);
+		bAutoCloseTransaction = true;
+	}
+
+	FChangeHistoryRecord Record;
+	Record.TargetObject = TargetObject;
+	Record.Description = Description;
+	Record.ChangeWrapper = MakeShared<FChangeHistoryRecord::FChangeWrapper>();
+	Record.ChangeWrapper->Change = MoveTemp(Change);
+
+	UE_LOG(LogTemp, Warning, TEXT("[HISTORY] %s"), *Record.Description.ToString());
+
+	ActiveTransaction.Records.Add(MoveTemp(Record));
+
+	if (bAutoCloseTransaction)
+	{
+		EndTransaction();
+	}
+}
+
+void USceneHistoryManager::EndTransaction()
+{
+	if (ensure(BeginTransactionDepth > 0) == false) return;
+
+	BeginTransactionDepth--;
+
+	if (BeginTransactionDepth == 0)
+	{
+		if (ActiveTransaction.Records.Num() > 0)
+		{
+			Transactions.Add(MoveTemp(ActiveTransaction));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[EndTransactioon] Empty Transaction Record!"));
+		}
+
+		ActiveTransaction = FChangeHistoryTransaction();
+
+		CurrentIndex = Transactions.Num();
+	}
+}
+
 void USceneHistoryManager::TruncateHistory()
 {
 	// truncate history if we are in undo step

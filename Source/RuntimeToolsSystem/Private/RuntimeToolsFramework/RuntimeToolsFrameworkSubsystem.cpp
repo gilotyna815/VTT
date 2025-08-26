@@ -158,6 +158,11 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	ToolsContext = NewObject<UInteractiveToolsContext>();
 
 	ContextQueriesAPI = MakeShared<FRuntimeToolsContextQueriesImpl>(ToolsContext, TargetWorld);
+	if (ContextActor)
+	{
+		ContextQueriesAPI->SetContextActor(ContextActor);
+	}
+
 	// ==>
 }
 

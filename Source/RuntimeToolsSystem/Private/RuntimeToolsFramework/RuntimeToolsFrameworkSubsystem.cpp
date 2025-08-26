@@ -28,6 +28,107 @@
 #include "RuntimeToolsFramework/RuntimeToolsFrameworkSubsystem.h"
 
 #include "ToolContextInterfaces.h"
+#include "RuntimeToolsFramework/ToolsContextActor.h"
+#include "MeshScene/RuntimeMeshSceneSubsystem.h"
+
+#include "MaterialDomain.h"
+
+#include "BaseGizmos/TransformGizmoUtil.h"
+
+class FRuntimeToolsContextQueriesImpl : public IToolsContextQueriesAPI
+{
+public:
+	FRuntimeToolsContextQueriesImpl(UInteractiveToolsContext* InContext, UWorld* InWorld)
+	{
+		ToolsContext = InContext;
+		TargetWorld = InWorld;
+	}
+
+	virtual void SetContextActor(AToolsContextActor* ContextActorIn)
+	{
+		ContextActor = ContextActorIn;
+	}
+
+	void UpdateActiveViewport(FViewport* ViewportIn)
+	{
+		ActiveViewport = ViewportIn;
+	}
+
+	virtual UWorld* GetCurrentEditingWorld() const override
+	{
+		return TargetWorld;
+	}
+
+	virtual void GetCurrentSelectionState(FToolBuilderState& StateOut) const override
+	{
+		StateOut.ToolManager = ToolsContext->ToolManager;
+		StateOut.TargetManager = ToolsContext->TargetManager;
+		StateOut.GizmoManager = ToolsContext->GizmoManager;
+		StateOut.World = TargetWorld;
+
+		const TArray<URuntimeMeshSceneObject*>& Selection = URuntimeMeshSceneSubsystem::Get()->GetSelection();
+		for (URuntimeMeshSceneObject* SelectedObject : Selection)
+		{
+			StateOut.SelectedActors.Add(SelectedObject->GetActor());
+			StateOut.SelectedComponents.Add(SelectedObject->GetMeshComponent());
+		}
+	}
+
+	virtual void GetCurrentViewState(FViewCameraState& StateOut) const override
+	{
+		if (!ContextActor)
+		{
+			return;
+		}
+
+		bool bHasCamera = ContextActor->HasActiveCameraComponent();
+
+		FVector Location;
+		FRotator Rotation;
+		ContextActor->GetActorEyesViewPoint(Location, Rotation);
+
+		StateOut.Position = Location;
+		StateOut.Orientation = Rotation.Quaternion();
+		StateOut.HorizontalFOVDegrees = 90;
+		StateOut.OrthoWorldCoordinateWidth = 1;
+		StateOut.AspectRatio = 1.0;
+		StateOut.bIsOrthographic = false;
+		StateOut.bIsVR = false;
+	}
+
+	virtual EToolContextCoordinateSystem GetCurrentCoordinateSystem() const override
+	{
+		return URuntimeToolsFrameworkSubsystem::Get()->GetCurrentCoordinateSystem();
+	}
+
+	virtual FToolContextSnappingConfiguration GetCurrentSnappingSettings() const override
+	{
+		return FToolContextSnappingConfiguration();
+	}
+
+	virtual UMaterialInterface* GetStandardMaterial(EStandardToolContextMaterials MaterialType) const override
+	{
+		return UMaterial::GetDefaultMaterial(MD_Surface);
+	}
+
+	virtual FViewport* GetHoveredViewport() const override
+	{
+		return ActiveViewport;
+	}
+
+	virtual FViewport* GetFocusedViewport() const override
+	{
+		return ActiveViewport;
+	}
+
+protected:
+	UInteractiveToolsContext* ToolsContext;
+	UWorld* TargetWorld;
+	AToolsContextActor* ContextActor = nullptr;
+	FViewport* ActiveViewport = nullptr;
+};
+
+
 
 URuntimeToolsFrameworkSubsystem* URuntimeToolsFrameworkSubsystem::InstanceSingleton = nullptr;
 
@@ -56,13 +157,8 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 
 	ToolsContext = NewObject<UInteractiveToolsContext>();
 
-	// <==
-}
-
-//UE_DISABLE_OPTIMIZATION
-void URuntimeToolsFrameworkSubsystem::Tick(float DeltaTime)
-{
-
+	ContextQueriesAPI = MakeShared<FRuntimeToolsContextQueriesImpl>(ToolsContext, TargetWorld);
+	// ==>
 }
 
 void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()

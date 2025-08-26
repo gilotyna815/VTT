@@ -37,7 +37,9 @@
 
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
 
+class FRuntimeToolsContextQueriesImpl;
 class AToolsContextActor;
+
 /**
  *
  */
@@ -84,6 +86,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CancelOrCompleteActiveTool();
 
+	//
+	// Support for tracking World/Local coordinate system global state
+	//
+
+	UPROPERTY()
+	EToolContextCoordinateSystem CurrentCoordinateSystem = EToolContextCoordinateSystem::World;
+
+	//UFUNCTION(BlueprintCallable // unsupported because EToolContextCoordinateSystem is not an uint8
+	EToolContextCoordinateSystem GetCurrentCoordinateSystem() const { return CurrentCoordinateSystem; }
+
 public:
 	UPROPERTY()
 	UWorld* TargetWorld;
@@ -92,13 +104,17 @@ public:
 	UInteractiveToolsContext* ToolsContext;
 
 	UPROPERTY()
-	USceneObjectTransformInteraction* TransformInteraction; // <==
 	AToolsContextActor* ContextActor;
+
+	UPROPERTY()
+	USceneObjectTransformInteraction* TransformInteraction;
 
 	UPROPERTY()
 	USceneHistoryManager* SceneHistory;
 
 protected:
+	TSharedPtr<FRuntimeToolsContextQueriesImpl> ContextQueriesAPI;
+	
 	bool bIsShuttingDown = false;
 	void InternalConsistencyChecks();
 

@@ -128,7 +128,56 @@ protected:
 	FViewport* ActiveViewport = nullptr;
 };
 
+class FRuntimeToolsContextTransactionImpl : public IToolsContextTransactionsAPI
+{
+public:
+	bool bInTransaction = false;
 
+	virtual void DisplayMessage(const FText& Message, EToolMessageLevel Level) override
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ToolMessage] %s"), *Message.ToString());
+	}
+
+	virtual void PostInvalidation() override
+	{
+		// not necessary in runtime context
+	}
+
+	virtual void BeginUndoTransaction(const FText& Description) override
+	{
+		URuntimeToolsFrameworkSubsystem::Get()->SceneHistory->BeginTransaction(Description);
+		bInTransaction = true;
+	}
+
+	virtual void EndUndoTransaction() override
+	{
+		URuntimeToolsFrameworkSubsystem::Get()->SceneHistory->EndTransaction();
+		bInTransaction = false;
+	}
+
+	virtual void AppendChange(UObject* TargetObject, TUniquePtr<FToolCommandChange> Change, const FText& Description) override
+	{
+		bool bCloseTransaction = false;
+		if (!bInTransaction)
+		{
+			BeginUndoTransaction(Description);
+			bCloseTransaction = true;
+		}
+
+		URuntimeToolsFrameworkSubsystem::Get()->SceneHistory->AppendChange(TargetObject, MoveTemp(Change), Description);
+
+		if (bCloseTransaction)
+		{
+			EndUndoTransaction();
+		}
+	}
+
+	virtual bool RequestSelectionChange(const FSelectedObjectsChangeList& SelectionChange) override
+	{
+		// not supported. would need to map elements of SelectionChange to MeshSceneObjects.
+		return false;
+	}
+};
 
 URuntimeToolsFrameworkSubsystem* URuntimeToolsFrameworkSubsystem::InstanceSingleton = nullptr;
 
@@ -163,7 +212,10 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 		ContextQueriesAPI->SetContextActor(ContextActor);
 	}
 
-	// ==>
+	ContextTransactionsAPI = MakeShared<FRuntimeToolsContextTransactionImpl>();
+
+	// register event handlers
+	//==>
 }
 
 void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()

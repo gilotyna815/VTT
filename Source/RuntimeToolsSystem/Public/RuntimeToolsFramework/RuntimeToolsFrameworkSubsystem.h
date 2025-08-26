@@ -38,6 +38,7 @@
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
 
 class FRuntimeToolsContextQueriesImpl;
+class FRuntimeToolsContextTransactionImpl;
 class AToolsContextActor;
 
 /**
@@ -114,6 +115,7 @@ public:
 
 protected:
 	TSharedPtr<FRuntimeToolsContextQueriesImpl> ContextQueriesAPI;
+	TSharedPtr<FRuntimeToolsContextTransactionImpl> ContextTransactionsAPI;
 	
 	bool bIsShuttingDown = false;
 	void InternalConsistencyChecks();

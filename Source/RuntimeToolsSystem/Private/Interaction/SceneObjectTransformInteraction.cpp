@@ -58,6 +58,14 @@ void USceneObjectTransformInteraction::Shutdown()
 	UpdateGizmoTargets(EmptySelection);
 }
 
+void USceneObjectTransformInteraction::ForceUpdateGizmoState()
+{
+	if (URuntimeMeshSceneSubsystem::Get())
+	{
+		UpdateGizmoTargets(URuntimeMeshSceneSubsystem::Get()->GetSelection());
+	}
+}
+
 void USceneObjectTransformInteraction::UpdateGizmoTargets(const TArray<URuntimeMeshSceneObject*>& Selection)
 {
 	UInteractiveGizmoManager* GizmoManager = URuntimeToolsFrameworkSubsystem::Get()->ToolsContext->GizmoManager;

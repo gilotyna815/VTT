@@ -61,6 +61,10 @@ public:
 
 	void Shutdown();
 
+	// Recreate Gizmo. Call when external state changes, like set of selected objects.
+	UFUNCTION(BlueprintCallable)
+	void ForceUpdateGizmoState();
+
 protected:
 
 	FDelegateHandle SelectionChangedEventHandle;

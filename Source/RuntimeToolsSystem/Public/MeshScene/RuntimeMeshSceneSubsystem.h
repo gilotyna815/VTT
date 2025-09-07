@@ -34,6 +34,8 @@
 
 #include "RuntimeMeshSceneSubsystem.generated.h"
 
+class FMeshSceneSelectionChange;
+
 /**
  * URuntimeMeshSceneSubsystem manages a "Scene" of "SceneObjects", currently only URuntimeMeshSceneObject (SO).
  *
@@ -64,17 +66,59 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category="URuntimeMeshSceneSubsystem")
-	TArray<URuntimeMeshSceneObject*> GetSelection() const {	return SelectedSceneObjects;	}
+	UPROPERTY()
+	UMaterialInterface* SelectedMaterial;
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category="URuntimeMeshSceneSubsystem")
+	TArray<URuntimeMeshSceneObject*> GetSelection() const {	return SelectedSceneObjects; }
+
+	UFUNCTION(BlueprintCallable, Category = "URuntimeMeshSceneSubsystem")
+	void SetSelected(URuntimeMeshSceneObject* SceneObject, bool bDeselect = false, bool bDeselectOthers = true);
+
+	UFUNCTION(BlueprintCallable, Category = "URuntimeMeshSceneSubsystem")
+	void ToggleSelected(URuntimeMeshSceneObject* SceneObject);
+
+	UFUNCTION(BlueprintCallable, Category="URuntimeMeshSceneSubsystem")
+	void ClearSelection();
+
 	DECLARE_MULTICAST_DELEGATE_OneParam(FMeshSceneSelectionChangedEvent, URuntimeMeshSceneSubsystem*)
 	FMeshSceneSelectionChangedEvent OnSelectionModified;
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "URuntimeMeshSceneSubsystem")
+	URuntimeMeshSceneObject* FindNearestHitObject(FVector RayOrigin, FVector RayDirection, FVector& WorldHitPoint, float& HitDistance, int& NearestTriangle, FVector& TriBaryCoordinates, float MaxDistance = 0);
 
 protected:
 	IToolsContextTransactionsAPI* TransactionsAPI = nullptr;
 
 	UPROPERTY()
+	TArray<URuntimeMeshSceneObject*> SceneObjects;
+
+	UPROPERTY()
 	TArray<URuntimeMeshSceneObject*> SelectedSceneObjects;
+
+	void SetSelectionInternal(const TArray<URuntimeMeshSceneObject*>& NewSceneObjects);
+
+	TUniquePtr<FMeshSceneSelectionChange> ActiveSelectionChange;
+	void BeginSelectionChange();
+	void EndSelectionChange();
+
+	friend class FMeshSceneSelectionChange;
+};
+
+/**
+ * FMeshSelectionChange represents a reversible change to UMeshSelectionSet
+ */
+class RUNTIMETOOLSSYSTEM_API FMeshSceneSelectionChange : public FToolCommandChange
+{
+public:
+	TArray<URuntimeMeshSceneObject*> OldSelection;
+	TArray<URuntimeMeshSceneObject*> NewSelection;
+
+	virtual void Apply(UObject* Object) override;
+	virtual void Revert(UObject* Object) override;
+	virtual FString ToString() const override { return TEXT("FMeshSceneSelectionChange"); }
 };

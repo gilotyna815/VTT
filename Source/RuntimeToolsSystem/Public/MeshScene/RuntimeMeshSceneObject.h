@@ -66,6 +66,22 @@ public:
 	// get the mesh component that represents this scene object
 	UMeshComponent* GetMeshComponent();
 
+	//
+	// Material functions
+	//
+
+	UFUNCTION(BlueprintCallable, Category = "RuntimeMeshSceneObject")
+	void SetToHighlightMaterial(UMaterialInterface* SetToMaterial);
+
+	UFUNCTION(BlueprintCallable, Category = "RuntimeMeshSceneObject")
+	void ClearHighlightMaterial();
+
+	//
+	// Spatial Query functions
+	//
+	UFUNCTION(BlueprintCallable, Category = "RuntimeMeshSceneObject")
+	bool IntersectRay(FVector RayOrigin, FVector RayDirection, FVector& WorrldHitPoint, float& HitDistance, int& NearestTriangle, FVector& TriBaryCoordinates, float MaxDistance = 0);
+
 protected:
 	// URuntimeMeshSceneObject's representation in UE Level is ADynamicSDMCActor
 	UPROPERTY()

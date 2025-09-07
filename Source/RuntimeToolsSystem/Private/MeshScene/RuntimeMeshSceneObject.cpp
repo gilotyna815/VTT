@@ -144,3 +144,49 @@ void URuntimeMeshSceneObject::UpdateComponentMaterials(bool bForceRefresh)
 		SimpleDynamicMeshActor->MeshComponent->NotifyMeshUpdated();
 	}
 }
+
+void URuntimeMeshSceneObject::SetToHighlightMaterial(UMaterialInterface* SetToMaterial)
+{
+	UMeshComponent* Component = GetMeshComponent();
+	int32 NumMaterials = FMath::Max(1, Component->GetNumMaterials());
+	for (int32 k = 0; k < NumMaterials; ++k)
+	{
+		Component->SetMaterial(k, SetToMaterial);
+	}
+
+	// HACK TO FORCE MATERIAL UPDATE IN SDMC
+	SimpleDynamicMeshActor->MeshComponent->NotifyMeshUpdated();
+}
+
+void URuntimeMeshSceneObject::ClearHighlightMaterial()
+{
+	UpdateComponentMaterials(true);
+}
+
+bool URuntimeMeshSceneObject::IntersectRay(FVector RayOrigin, FVector RayDirection, FVector& WorldHitPoint, float& HitDistance, int& NearestTriangle, FVector& TriBaryCoordinates, float MaxDistance)
+{
+	if (!ensure(SourceMesh)) return false;
+	if (!GetActor()) return false; // this can happen if the Actor gets deleted, but the SceneObject does not
+
+	UE::Geometry::FTransformSRT3d ActorToWorld(GetActor()->GetActorTransform());
+	FVector3d WorldDirection(RayDirection); WorldDirection.Normalize();
+	FRay3d LocalRay(ActorToWorld.InverseTransformPosition((FVector3d)RayOrigin), ActorToWorld.InverseTransformNormal(WorldDirection));
+	UE::Geometry::IMeshSpatial::FQueryOptions QueryOptions;
+	if (MaxDistance > 0)
+	{
+		QueryOptions.MaxDistance = MaxDistance;
+	}
+	NearestTriangle = MeshAABBTree->FindNearestHitTriangle(LocalRay, QueryOptions);
+	if (SourceMesh->IsTriangle(NearestTriangle))
+	{
+		UE::Geometry::FIntrRay3Triangle3d IntrQuery = UE::Geometry::TMeshQueries<FDynamicMesh3>::TriangleIntersection(*SourceMesh, NearestTriangle, LocalRay);
+		if (IntrQuery.IntersectionType == EIntersectionType::Point)
+		{
+			HitDistance = IntrQuery.RayParameter;
+			WorldHitPoint = (FVector)ActorToWorld.TransformPosition(LocalRay.PointAt(IntrQuery.RayParameter));
+			TriBaryCoordinates = (FVector)IntrQuery.TriangleBaryCoords;
+			return true;
+		}
+	}
+	return false;
+}

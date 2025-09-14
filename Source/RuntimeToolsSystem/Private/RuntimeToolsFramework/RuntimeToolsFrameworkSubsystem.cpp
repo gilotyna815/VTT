@@ -219,6 +219,12 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	// register event handlers
 	ToolsContext->ToolManager->OnToolStarted.AddUObject(this, &URuntimeToolsFrameworkSubsystem::OnToolStarted);
 	ToolsContext->ToolManager->OnToolEnded.AddUObject(this, &URuntimeToolsFrameworkSubsystem::OnToolEnded);
+
+	// create scene history
+	SceneHistory = NewObject<USceneHistoryManager>(this);
+	SceneHistory->OnHistoryStateChange.AddUObject(this, &URuntimeToolsFrameworkSubsystem::OnSceneHistoryStateChange);
+
+	//register selection interaction
 	//==>
 }
 
@@ -240,6 +246,14 @@ void URuntimeToolsFrameworkSubsystem::OnToolStarted(UInteractiveToolManager* Man
 }
 
 void URuntimeToolsFrameworkSubsystem::OnToolEnded(UInteractiveToolManager* Manager, UInteractiveTool* Tool)
+{
+	if (!bIsShuttingDown)
+	{
+		TransformInteraction->ForceUpdateGizmoState();
+	}
+}
+
+void URuntimeToolsFrameworkSubsystem::OnSceneHistoryStateChange()
 {
 	if (!bIsShuttingDown)
 	{

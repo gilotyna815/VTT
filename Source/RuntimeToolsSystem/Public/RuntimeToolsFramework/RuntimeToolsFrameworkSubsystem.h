@@ -127,6 +127,8 @@ protected:
 	void OnToolStarted(UInteractiveToolManager* Manager, UInteractiveTool* Tool);
 	void OnToolEnded(UInteractiveToolManager* Manager, UInteractiveTool* Tool);
 
+	void OnSceneHistoryStateChange();
+
 	// property set keepalivem hack
 	void AddAllPropertySetKeepAlives(UInteractiveTool* Tool);
 	void AddPropertySetKeepalives(UInteractiveToolPropertySet* PropertySet);

@@ -102,6 +102,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsBuildingTransaction() const { return BeginTransactionDepth > 0; }
 
+	/** This delegate is fired whenever we Undo() or Redo() */
+	DECLARE_MULTICAST_DELEGATE(FSceneHistoryStateChangeEvent);
+	FSceneHistoryStateChangeEvent OnHistoryStateChange;
+
 protected:
 
 	// undo history, stored as a set of transactions, which are themselves list of (UObject, FCommandChange) pairs

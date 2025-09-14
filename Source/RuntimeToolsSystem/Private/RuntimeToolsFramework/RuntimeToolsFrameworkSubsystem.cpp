@@ -214,7 +214,11 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 
 	ContextTransactionsAPI = MakeShared<FRuntimeToolsContextTransactionImpl>();
 
+	ToolsContext->Initialize(ContextQueriesAPI.Get(), ContextTransactionsAPI.Get());
+
 	// register event handlers
+	ToolsContext->ToolManager->OnToolStarted.AddUObject(this, &URuntimeToolsFrameworkSubsystem::OnToolStarted);
+	ToolsContext->ToolManager->OnToolEnded.AddUObject(this, &URuntimeToolsFrameworkSubsystem::OnToolEnded);
 	//==>
 }
 
@@ -227,6 +231,65 @@ void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()
 		CancelOrCompleteActiveTool();
 
 		// TransformInteraction->Shutdown(); // <==
+
+void URuntimeToolsFrameworkSubsystem::OnToolStarted(UInteractiveToolManager* Manager, UInteractiveTool* Tool)
+{
+	AddAllPropertySetKeepAlives(Tool);
+
+	TransformInteraction->ForceUpdateGizmoState();
+}
+
+void URuntimeToolsFrameworkSubsystem::OnToolEnded(UInteractiveToolManager* Manager, UInteractiveTool* Tool)
+{
+	if (!bIsShuttingDown)
+	{
+		TransformInteraction->ForceUpdateGizmoState();
+	}
+}
+
+void URuntimeToolsFrameworkSubsystem::AddAllPropertySetKeepAlives(UInteractiveTool* Tool)
+{
+	TArray<UObject*> PropertySets = Tool->GetToolProperties(false);
+	for (UObject* PropertySetObject : PropertySets)
+	{
+		if (UInteractiveToolPropertySet* PropertySet = Cast<UInteractiveToolPropertySet>(PropertySetObject))
+		{
+			AddPropertySetKeepalives(PropertySet);
+		}
+	}
+}
+
+void URuntimeToolsFrameworkSubsystem::AddPropertySetKeepalives(UInteractiveToolPropertySet* PropertySet)
+{
+	if (ensure(PropertySet != nullptr))
+	{
+		bool bCached = false;
+
+		UInteractiveToolPropertySet* CDO = GetMutableDefault<UInteractiveToolPropertySet>(PropertySet->GetClass());
+
+		for (TFieldIterator<FProperty> It(PropertySet->GetClass(), EFieldIterationFlags::IncludeSuper); It; ++It)
+		{
+			FString Name = It->GetName();
+			if (Name == TEXT("CachedProperties"))
+			{
+				const FProperty* Property = *It;
+				if (const FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property))
+				{
+					UObject* TargetObject = ObjectProperty->GetObjectPropertyValue(Property->ContainerPtrToValuePtr<UObject*>(CDO));
+					PropertySetKeepAlives.AddUnique(TargetObject);
+					bCached = true;
+				}
+			}
+		}
+
+		if (bCached == true)
+		{
+			FString PropSetName;
+			PropertySet->GetClass()->GetName(PropSetName);
+			UE_LOG(LogTemp, Warning, TEXT("Failed to find PropertySet Keepalive for %s!"), *PropSetName);
+		}
+	}
+}
 
 void URuntimeToolsFrameworkSubsystem::SetContextActor(AToolsContextActor* ActorIn)
 {

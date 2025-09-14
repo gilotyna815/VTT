@@ -33,6 +33,7 @@
 
 #include "ToolsContextRenderComponent.h"
 #include "MeshScene/SceneHistoryManager.h"
+#include "Interaction/SceneObjectSelectionInteraction.h"
 #include "Interaction/SceneObjectTransformInteraction.h"
 
 #include "RuntimeToolsFrameworkSubsystem.generated.h"
@@ -108,6 +109,9 @@ public:
 	AToolsContextActor* ContextActor;
 
 	UPROPERTY()
+	USceneObjectSelectionInteraction* SelectionInteraction;
+
+	UPROPERTY()
 	USceneObjectTransformInteraction* TransformInteraction;
 
 	UPROPERTY()
@@ -120,4 +124,13 @@ protected:
 	bool bIsShuttingDown = false;
 	void InternalConsistencyChecks();
 
+	void OnToolStarted(UInteractiveToolManager* Manager, UInteractiveTool* Tool);
+	void OnToolEnded(UInteractiveToolManager* Manager, UInteractiveTool* Tool);
+
+	// property set keepalivem hack
+	void AddAllPropertySetKeepAlives(UInteractiveTool* Tool);
+	void AddPropertySetKeepalives(UInteractiveToolPropertySet* PropertySet);
+
+	UPROPERTY()
+	TArray<UObject*> PropertySetKeepAlives;
 };

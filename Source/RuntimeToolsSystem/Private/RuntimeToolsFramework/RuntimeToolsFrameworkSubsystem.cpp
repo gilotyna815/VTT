@@ -238,7 +238,15 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	{
 		return false;
 	});
-	//==>
+
+	// create PDI rendering bridge Component
+	FActorSpawnParameters SpawnInfo;
+	PDIRenderActor = TargetWorld->SpawnActor<AActor>(FVector::ZeroVector, FRotator(0, 0, 0), SpawnInfo);
+	PDIRenderComponent = NewObject<UToolsContextRenderComponent>(PDIRenderActor);
+	PDIRenderActor->SetRootComponent(PDIRenderComponent);
+	PDIRenderComponent->RegisterComponent();
+
+
 }
 
 void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()

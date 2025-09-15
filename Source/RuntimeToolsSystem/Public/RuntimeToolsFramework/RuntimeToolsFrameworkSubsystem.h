@@ -109,6 +109,9 @@ public:
 	UInteractiveToolsContext* ToolsContext;
 
 	UPROPERTY()
+	USceneHistoryManager* SceneHistory;
+
+	UPROPERTY()
 	AToolsContextActor* ContextActor;
 
 	UPROPERTY()
@@ -118,7 +121,10 @@ public:
 	USceneObjectTransformInteraction* TransformInteraction;
 
 	UPROPERTY()
-	USceneHistoryManager* SceneHistory;
+	AActor* PDIRenderActor;
+
+	UPROPERTY()
+	UToolsContextRenderComponent* PDIRenderComponent;
 
 protected:
 	TSharedPtr<FRuntimeToolsContextQueriesImpl> ContextQueriesAPI;

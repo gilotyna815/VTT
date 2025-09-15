@@ -86,6 +86,9 @@ public:
 	//
 
 	UFUNCTION(BlueprintCallable)
+	bool HaveActiveTool();
+
+	UFUNCTION(BlueprintCallable)
 	bool CancelOrCompleteActiveTool();
 
 	//

@@ -225,6 +225,19 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	SceneHistory->OnHistoryStateChange.AddUObject(this, &URuntimeToolsFrameworkSubsystem::OnSceneHistoryStateChange);
 
 	//register selection interaction
+	SelectionInteraction = NewObject<USceneObjectSelectionInteraction>();
+	SelectionInteraction->Initialize([this]()
+	{
+		return HaveActiveTool() == false;
+	});
+	ToolsContext->InputRouter->RegisterSource(SelectionInteraction);
+
+	//create transform interaction
+	TransformInteraction = NewObject<USceneObjectTransformInteraction>();
+	TransformInteraction->Initialize([this]()
+	{
+		return false;
+	});
 	//==>
 }
 
@@ -312,6 +325,13 @@ void URuntimeToolsFrameworkSubsystem::SetContextActor(AToolsContextActor* ActorI
 	{
 		ContextQueriesAPI->SetContextActor(ContextActor);
 	}
+}
+
+bool URuntimeToolsFrameworkSubsystem::HaveActiveTool()
+{
+	return (ToolsContext != nullptr)
+		&& (ToolsContext->ToolManager != nullptr)
+		&& ToolsContext->ToolManager->HasActiveTool(EToolSide::Mouse);
 }
 
 bool URuntimeToolsFrameworkSubsystem::CancelOrCompleteActiveTool()

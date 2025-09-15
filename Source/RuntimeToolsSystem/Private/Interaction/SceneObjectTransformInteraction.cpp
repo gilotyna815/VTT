@@ -41,6 +41,7 @@ void USceneObjectTransformInteraction::Initialize(TUniqueFunction<bool()> GizmoE
 	{
 		UpdateGizmoTargets(SceneSubsystem->GetSelection());
 	});
+
 }
 
 void USceneObjectTransformInteraction::Shutdown()

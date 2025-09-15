@@ -55,7 +55,7 @@ public:
 
 	/**
 	 * Set up the transform interaction.
-	 * @param GizmoEnabledCallbackIn callback that determ,ines if Gizmo should be created and visible. For example during a Tool we generally want to hide the TRS Gizmo.
+	 * @param GizmoEnabledCallbackIn callback that determines if Gizmo should be created and visible. For example during a Tool we generally want to hide the TRS Gizmo.
 	 */
 	void Initialize(TUniqueFunction<bool()> GizmoEnabledCallbackIn);
 

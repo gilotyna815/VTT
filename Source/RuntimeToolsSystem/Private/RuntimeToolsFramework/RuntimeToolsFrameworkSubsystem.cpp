@@ -246,6 +246,8 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	PDIRenderActor->SetRootComponent(PDIRenderComponent);
 	PDIRenderComponent->RegisterComponent();
 
+	// have to disable this for current rools framework handling of property defaults
+	GShouldVerifyGCAssumptions = false;
 
 }
 

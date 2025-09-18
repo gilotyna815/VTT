@@ -259,6 +259,9 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	//ToolsContext->TargetManager->AddTargetFactory(NewObject<URuntimeDynamicMeshComponentToolTargetFactory>(ToolsContext->ToolManager));
 	ToolsContext->TargetManager->AddTargetFactory(NewObject<URuntimeDynamicMeshComponentToolTargetFactory>());
 	
+	// register transform gizmo util helper
+	UE::TransformGizmoUtil::RegisterTransformGizmoContextObject(ToolsContext);
+
 }
 
 void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()

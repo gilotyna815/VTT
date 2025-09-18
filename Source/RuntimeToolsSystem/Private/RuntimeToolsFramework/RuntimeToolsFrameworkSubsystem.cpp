@@ -32,7 +32,7 @@
 #include "MeshScene/RuntimeMeshSceneSubsystem.h"
 
 #include "ToolTargetManager.h"
-#include "RuntimeDynamicMeshComponentToolTarget.h"
+#include "RuntimeToolsFramework/RuntimeDynamicMeshComponentToolTarget.h"
 
 #include "MaterialDomain.h"
 

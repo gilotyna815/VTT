@@ -34,6 +34,8 @@
 #include "ToolTargetManager.h"
 #include "RuntimeToolsFramework/RuntimeDynamicMeshComponentToolTarget.h"
 
+#include "RuntimeToolsFramework/RuntimeModelingObjectsCreationAPI.h"
+
 #include "MaterialDomain.h"
 
 #include "BaseGizmos/TransformGizmoUtil.h"
@@ -262,6 +264,8 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	// register transform gizmo util helper
 	UE::TransformGizmoUtil::RegisterTransformGizmoContextObject(ToolsContext);
 
+	// register object creation API
+	URuntimeModelingObjectsCreationAPI* ModelCreationAPI = URuntimeModelingObjectsCreationAPI::Register(ToolsContext);
 }
 
 void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()

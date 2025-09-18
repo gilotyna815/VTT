@@ -51,7 +51,9 @@ class RUNTIMETOOLSSYSTEM_API URuntimeToolsFrameworkSubsystem : public UGameInsta
 	GENERATED_BODY()
 
 	//
-	// Small hack to workaround the fact that you generally need the UGameInstance pointer to look up a GameInstance subsystem. We store the pointer and then allow ::Get() to return it (ie actually a singleton)
+	// Small hack to workaround the fact that you generally need the UGameInstance pointer
+	// to look up a GameInstance subsystem. We store the pointer and then allow ::Get() to
+	// return it (ie actually a singleton)
 	//
 public:
 	static void InitializeSingleton(URuntimeToolsFrameworkSubsystem* Subsystem);
@@ -63,7 +65,7 @@ protected:
 	// Functions to setup/shutdown/operate the RuntimeToolsFramework
 	//
 public:
-	void InitializeToolsContext(UWorld* TargetWorld); // <==
+	void InitializeToolsContext(UWorld* TargetWorld);
 	virtual void Tick(float DeltaTime);
 	void ShutdownToolsContext();
 	void SetContextActor(AToolsContextActor* ActorIn);

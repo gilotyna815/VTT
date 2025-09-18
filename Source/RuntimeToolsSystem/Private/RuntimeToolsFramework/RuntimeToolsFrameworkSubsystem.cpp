@@ -31,6 +31,9 @@
 #include "RuntimeToolsFramework/ToolsContextActor.h"
 #include "MeshScene/RuntimeMeshSceneSubsystem.h"
 
+#include "ToolTargetManager.h"
+#include "RuntimeDynamicMeshComponentToolTarget.h"
+
 #include "MaterialDomain.h"
 
 #include "BaseGizmos/TransformGizmoUtil.h"
@@ -249,6 +252,13 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	// have to disable this for current tools framework handling of property defaults
 	GShouldVerifyGCAssumptions = false;
 
+	//// make sure we have registered FPrimitiveComponentTarget factories
+	//FSimpleDynamicMeshComponentTargetFactory::RegisterFactory();
+
+	// register target factory for dynamic mesh components
+	//ToolsContext->TargetManager->AddTargetFactory(NewObject<URuntimeDynamicMeshComponentToolTargetFactory>(ToolsContext->ToolManager));
+	ToolsContext->TargetManager->AddTargetFactory(NewObject<URuntimeDynamicMeshComponentToolTargetFactory>());
+	
 }
 
 void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()

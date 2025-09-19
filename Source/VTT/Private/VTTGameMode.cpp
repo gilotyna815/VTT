@@ -60,7 +60,9 @@ void AVTTGameMode::InitializeToolsSystem()
 
 	// initialize Tools and Scene systems
 	ToolsSystem->InitializeToolsContext(World);
-	//==> SceneSystem->SetCurrentTransactionsAPI();
+	SceneSystem->SetCurrentTransactionsAPI(ToolsSystem->GetTransactionsAPI());
+
+	//==>
 }
 
 void AVTTGameMode::Tick(float DeltaTime)

@@ -80,6 +80,8 @@ public:
 	// Access to various data structures created/tracked by the Subsystem
 	//
 
+	IToolsContextTransactionsAPI* GetTransactionsAPI();
+
 	UFUNCTION(BlueprintCallable)
 	USceneHistoryManager* GetSceneHistory() { return SceneHistory; }
 

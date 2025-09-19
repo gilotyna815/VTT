@@ -205,6 +205,11 @@ void URuntimeToolsFrameworkSubsystem::Deinitialize()
 	InstanceSingleton = nullptr;
 }
 
+IToolsContextTransactionsAPI* URuntimeToolsFrameworkSubsystem::GetTransactionsAPI()
+{
+	return ContextTransactionsAPI.Get();
+}
+
 void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorldIn)
 {
 	TargetWorld = TargetWorldIn;

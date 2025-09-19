@@ -29,17 +29,6 @@
 
 #include "RuntimeToolsSystem/Public/RuntimeToolsFramework/RuntimeToolsFrameworkSubsystem.h"
 #include "RuntimeToolsSystem/Public/MeshScene/RuntimeMeshSceneSubsystem.h"
-//
-//#include "AddPrimitiveTool.h"
-//#include "DrawAndRevolveTool.h"
-//#include "MeshVertexSculptTool.h"
-//#include "PlaneCutTool.h"
-//
-//#include "Tools/RuntimeDrawPolygonTool.h"
-//#include "Tools/RuntimeDynamicMeshSculptTool.h"
-//#include "Tools/RuntimeRemeshMeshTool.h"
-//#include "Tools/RuntimeMeshBooleanTool.h"
-//#include "Tools/RuntimePolyEditTool.h"
 
 AVTTGameMode::AVTTGameMode()
 {
@@ -71,7 +60,7 @@ void AVTTGameMode::InitializeToolsSystem()
 
 	// initialize Tools and Scene systems
 	ToolsSystem->InitializeToolsContext(World);
-	//SceneSystem->SetCurrentTransactionsAPI();
+	//==> SceneSystem->SetCurrentTransactionsAPI();
 }
 
 void AVTTGameMode::Tick(float DeltaTime)
@@ -83,12 +72,3 @@ void AVTTGameMode::Tick(float DeltaTime)
 		ToolsSystem->Tick(DeltaTime);
 	}
 }
-
-void AVTTGameMode::ShutdownToolsSystem()
-{
-}
-
-void AVTTGameMode::RegisterTools()
-{
-}
-

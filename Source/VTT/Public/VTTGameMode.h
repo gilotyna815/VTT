@@ -35,11 +35,9 @@
 class URuntimeToolsFrameworkSubsystem;
 class URuntimeMeshSceneSubsystem;
 
-/**
- * This GameMode initializes the URuntimeMeshSceneSubsystem and URuntimeToolsFrameworkSubsystem, and then registers various Tools (see InitializeToolsSystem).
- * 
- * The GameMode Tick also ticks the Tools system
- */
+/// <summary>
+/// Adds the Runtime Tools to the game.
+/// </summary>
 UCLASS()
 class VTT_API AVTTGameMode : public AGameModeBase
 {
@@ -49,13 +47,20 @@ public:
 	AVTTGameMode();
 
 	virtual void StartPlay() override;
-
-	virtual void InitializeToolsSystem();
-	virtual void RegisterTools();
-
+	/*
+	 * Also ticks the Tools system
+	 */
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void ShutdownToolsSystem();
+	//
+	// Runtime Tools Framework implementation
+	//
+	
+	/// <summary>
+	/// Initializes both the Runtime Tools and Mesh Scene subsystems, then
+	/// registers the runtime tools.
+	/// </summary>
+	virtual void InitializeToolsSystem();
 
 	UPROPERTY()
 	URuntimeToolsFrameworkSubsystem* ToolsSystem;
@@ -64,6 +69,3 @@ public:
 	URuntimeMeshSceneSubsystem* SceneSystem;
 
 };
-
-
-

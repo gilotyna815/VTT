@@ -35,9 +35,9 @@
 class URuntimeToolsFrameworkSubsystem;
 class URuntimeMeshSceneSubsystem;
 
-/// <summary>
-/// Adds the Runtime Tools to the game.
-/// </summary>
+/*
+ * Adds the Runtime Tools to the game.
+ */
 UCLASS()
 class VTT_API AVTTGameMode : public AGameModeBase
 {

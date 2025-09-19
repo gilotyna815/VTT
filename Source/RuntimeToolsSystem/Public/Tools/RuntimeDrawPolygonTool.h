@@ -28,41 +28,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "DrawPolygonTool.h"
 
-#include "VTTGameMode.generated.h"
+#include "RuntimeDrawPolygonTool.generated.h"
 
-class URuntimeToolsFrameworkSubsystem;
-class URuntimeMeshSceneSubsystem;
-
-/*
- * Adds the Runtime Tools to the game.
+/**
+ * Tool builder for URuntimeDrawPolygonTool instances
  */
 UCLASS()
-class VTT_API AVTTGameMode : public AGameModeBase
+class RUNTIMETOOLSSYSTEM_API URuntimeDrawPolygonToolBuilder : public UDrawPolygonToolBuilder
 {
 	GENERATED_BODY()
 
-public:
-	AVTTGameMode();
+};
 
-	virtual void StartPlay() override;
-	/*
-	 * Also ticks the Tools system
-	 */
-	virtual void Tick(float DeltaTime) override;
-
-	//
-	// Runtime Tools Framework implementation
-	//
-
-	virtual void InitializeToolsSystem();
-	virtual void RegisterTools();
-
-	UPROPERTY()
-	URuntimeToolsFrameworkSubsystem* ToolsSystem;
-
-	UPROPERTY()
-	URuntimeMeshSceneSubsystem* SceneSystem;
-
+/**
+ * 
+ */
+UCLASS()
+class RUNTIMETOOLSSYSTEM_API URuntimeDrawPolygonTool : public UDrawPolygonTool
+{
+	GENERATED_BODY()
+	
 };

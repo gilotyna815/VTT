@@ -15,7 +15,9 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"CoreUObject",
-				"Engine"
+				"Engine",
+				"MeshModelingTools",
+				"MeshModelingToolsExp"
 			]
 		}
 	],

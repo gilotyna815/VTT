@@ -28,41 +28,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "EditMeshPolygonsTool.h"
 
-#include "VTTGameMode.generated.h"
+#include "RuntimePolyEditTool.generated.h"
 
-class URuntimeToolsFrameworkSubsystem;
-class URuntimeMeshSceneSubsystem;
-
-/*
- * Adds the Runtime Tools to the game.
- */
 UCLASS()
-class VTT_API AVTTGameMode : public AGameModeBase
+class RUNTIMETOOLSSYSTEM_API URuntimePolyEditToolBuilder : public UEditMeshPolygonsToolBuilder
 {
 	GENERATED_BODY()
+};
 
-public:
-	AVTTGameMode();
-
-	virtual void StartPlay() override;
-	/*
-	 * Also ticks the Tools system
-	 */
-	virtual void Tick(float DeltaTime) override;
-
-	//
-	// Runtime Tools Framework implementation
-	//
-
-	virtual void InitializeToolsSystem();
-	virtual void RegisterTools();
-
-	UPROPERTY()
-	URuntimeToolsFrameworkSubsystem* ToolsSystem;
-
-	UPROPERTY()
-	URuntimeMeshSceneSubsystem* SceneSystem;
-
+/**
+ * 
+ */
+UCLASS()
+class RUNTIMETOOLSSYSTEM_API URuntimePolyEditTool : public UEditMeshPolygonsTool
+{
+	GENERATED_BODY()
+	
 };

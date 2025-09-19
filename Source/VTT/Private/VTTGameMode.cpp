@@ -30,6 +30,17 @@
 #include "RuntimeToolsSystem/Public/RuntimeToolsFramework/RuntimeToolsFrameworkSubsystem.h"
 #include "RuntimeToolsSystem/Public/MeshScene/RuntimeMeshSceneSubsystem.h"
 
+// Tools
+#include "AddPrimitiveTool.h"
+#include "RuntimeToolsSystem/Public/Tools/RuntimeDrawPolygonTool.h"
+#include "DrawAndRevolveTool.h"
+#include "RuntimeToolsSystem/Public/Tools/RuntimePolyEditTool.h"
+#include "PlaneCutTool.h"
+#include "RuntimeToolsSystem/Public/Tools/RuntimeRemeshMeshTool.h"
+#include "MeshVertexSculptTool.h"
+#include "RuntimeToolsSystem/Public/Tools/RuntimeDynamicMeshSculptTool.h"
+#include "RuntimeToolsSystem/Public/Tools/RuntimeMeshBooleanTool.h"
+
 AVTTGameMode::AVTTGameMode()
 {
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -62,7 +73,41 @@ void AVTTGameMode::InitializeToolsSystem()
 	ToolsSystem->InitializeToolsContext(World);
 	SceneSystem->SetCurrentTransactionsAPI(ToolsSystem->GetTransactionsAPI());
 
-	//==>
+	RegisterTools();
+}
+
+void AVTTGameMode::RegisterTools()
+{
+	UInteractiveToolManager* ToolManager = ToolsSystem->ToolsContext->ToolManager;
+
+	auto AddPrimitiveToolBuilder = NewObject<UAddPrimitiveToolBuilder>();
+	AddPrimitiveToolBuilder->ShapeType = UAddPrimitiveToolBuilder::EMakeMeshShapeType::Box;
+	ToolManager->RegisterToolType("AddPrimitiveBox", AddPrimitiveToolBuilder);
+
+	auto DrawPolygonToolBuilder = NewObject<URuntimeDrawPolygonToolBuilder>();
+	ToolManager->RegisterToolType("DrawPolygon", DrawPolygonToolBuilder);
+
+	auto PolyRevolveToolBuilder = NewObject<UDrawAndRevolveToolBuilder>();
+	ToolManager->RegisterToolType("PolyRevolve", PolyRevolveToolBuilder);
+
+	auto PolyEditToolBuilder = NewObject<URuntimePolyEditToolBuilder>();
+	ToolManager->RegisterToolType("EditPolygons", PolyEditToolBuilder);
+
+	auto MeshPlaneCutToolBuilder = NewObject<UPlaneCutToolBuilder>();
+	ToolManager->RegisterToolType("PlaneCut", MeshPlaneCutToolBuilder);
+
+	auto RemeshMeshToolBuilder = NewObject<URuntimeRemeshMeshToolBuilder>();
+	ToolManager->RegisterToolType("RemeshMesh", RemeshMeshToolBuilder);
+
+	auto VertexSculptToolBuilder = NewObject<UMeshVertexSculptToolBuilder>();
+	ToolManager->RegisterToolType("VertexSculpt", VertexSculptToolBuilder);
+
+	auto DynamicSculptToolBuilder = NewObject<URuntimeDynamicMeshSculptToolBuilder>();
+	DynamicSculptToolBuilder->bEnableRemeshing = true;
+	ToolManager->RegisterToolType("DynamicSculpt", DynamicSculptToolBuilder);
+
+	auto MeshBooleanToolBuilder = NewObject<URuntimeMeshBooleanToolBuilder>();
+	ToolManager->RegisterToolType("MeshBoolean", MeshBooleanToolBuilder);
 }
 
 void AVTTGameMode::Tick(float DeltaTime)

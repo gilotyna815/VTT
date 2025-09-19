@@ -14,7 +14,9 @@ public class VTT : ModuleRules
             "Engine",
             "EnhancedInput",
             "InteractiveToolsFramework",
-            "RuntimeToolsSystem"
+            "RuntimeToolsSystem",
+            "MeshModelingTools",
+            "MeshModelingToolsExp"
         });
     }
 }

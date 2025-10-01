@@ -71,6 +71,12 @@ public:
 
 public:
 
+	UFUNCTION(BlueprintCallable)
+	bool DeleteSelectedSceneObjects();
+	bool DeleteSelectedSceneObjects(AActor* SkipActor);
+
+public:
+
 	UFUNCTION(BlueprintCallable, Category="URuntimeMeshSceneSubsystem")
 	TArray<URuntimeMeshSceneObject*> GetSelection() const {	return SelectedSceneObjects; }
 
@@ -97,6 +103,9 @@ protected:
 	UPROPERTY()
 	TArray<URuntimeMeshSceneObject*> SceneObjects;
 
+	void AddSceneObjectInternal(URuntimeMeshSceneObject* Object, bool bIsUndoRedo);
+	void RemoveSceneObjectInternal(URuntimeMeshSceneObject* Object, bool bIsUndoRedo);
+
 	UPROPERTY()
 	TArray<URuntimeMeshSceneObject*> SelectedSceneObjects;
 
@@ -107,6 +116,7 @@ protected:
 	void EndSelectionChange();
 
 	friend class FMeshSceneSelectionChange;
+	friend class FAddRemoveSceneObjectChange;
 };
 
 /**
@@ -121,4 +131,16 @@ public:
 	virtual void Apply(UObject* Object) override;
 	virtual void Revert(UObject* Object) override;
 	virtual FString ToString() const override { return TEXT("FMeshSceneSelectionChange"); }
+};
+
+class RUNTIMETOOLSSYSTEM_API FAddRemoveSceneObjectChange : public FToolCommandChange
+{
+public:
+	URuntimeMeshSceneObject* SceneObject;
+	bool bAdded = true;
+
+public:
+	virtual void Apply(UObject* Object) override;
+	virtual void Revert(UObject* Object) override;
+	virtual FString ToString() const override { return TEXT("FAddRemoveSceneObjectChange"); }
 };

@@ -34,17 +34,31 @@
 class URuntimeToolsFrameworkSubsystem;
 
 /**
+ * Camera-control modes that AToolsContextActor has implemented
+ */
+UENUM()
+enum class EToolActorInteractionMode : uint8
+{
+	NoInteraction,
+	RightMouseCameraControl,
+	AltCameraControl
+};
+
+/**
  * AToolsContextActor is the Pawn used in the AToolsFrameworkDemoGameModeBase.
- * This Game Mode initializes the URuntimeMeshSceneSubsystem and URuntimeToolsFrameworkSubsystem.
+ * This Game Mode initializes the URuntimeMeshSceneSubsystem and
+ * URuntimeToolsFrameworkSubsystem.
  * Essentially, this Actor has two jobs:
  *
  * 1) to forward Input events (from the PlayerInputComponent) to these subsystems,
  * both mouse events and Actions configured in the project settings.
  *
- * 2) to implement "camera control", as the rendering is done from this actors position (ie as a first-person view).
- * The base ADefaultPawn implements standard right-mouse-fly controls, and so if right mouse is held down,
- * we just call those functions. In addition, Hold-alt camera controls are also done here, rather
- * than using the ITF. (*However*, the alt-controls are not fully implemented, ie it is not Maya-style alt+3-mouse-button controls)
+ * 2) to implement "camera control", as the rendering is done from this actors position (ie
+ * as a first-person view). The base ADefaultPawn implements standard right-mouse-fly
+ * controls, and so if right mouse is held down, we just call those functions. In addition,
+ * Hold-alt camera controls are also done here, rather than using the ITF. (*However*, the
+ * alt-controls are not fully implemented, ie it is not Maya-style alt+3-mouse-button
+ * controls)
  */
 UCLASS()
 class RUNTIMETOOLSSYSTEM_API AToolsContextActor : public ADefaultPawn
@@ -56,6 +70,11 @@ public:
 	// Sets default values for this pawn's properties
 	AToolsContextActor();
 
+	// set in PossessedBy(), we keep track of this so that the ToolsFramework can access it
+	// to figure out cursor rays
+	UPROPERTY()
+	APlayerController* PlayerController;
+
 protected:
 	// Called when the game starts or spawned
 	virtual void BeginPlay() override;
@@ -64,9 +83,48 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
+	// called on startup
+	virtual void PossessedBy(AController* ControllerIn) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 protected:
 	URuntimeToolsFrameworkSubsystem* ToolsSystem;
+
+	EToolActorInteractionMode CurrentInteractionMode = EToolActorInteractionMode::NoInteraction;
+	bool bIsAltKeyDown = false;
+	bool bIsLeftMouseDown = false;
+	bool bIsMiddleMouseDown = false;
+	bool bIsRightMouseDown = false;
+
+	virtual void OnMoveForwardKeyAxis(float MoveDelta);
+	virtual void OnMoveRightKeyAxis(float MoveDelta);
+	virtual void OnMoveUpKeyAxis(float MoveDelta);
+
+	virtual void OnAltKeyDown();
+	virtual void OnAltKeyUp();
+
+	virtual void OnLeftMouseDown();
+	virtual void OnLeftMouseUp();
+
+	virtual void OnMiddleMouseDown();
+	virtual void OnMiddleMouseUp();
+
+	virtual void OnRightMouseDown();
+	virtual void OnRightMouseUp();
+
+	virtual void OnMouseMoveX(float MoveX);
+	virtual void OnMouseMoveY(float MoveY);
+
+	virtual void OnToolAccept();
+	virtual void OnToolExit();
+
+	virtual void OnUndo();
+	virtual void OnRedo();
+
+	virtual void OnDelete();
 };

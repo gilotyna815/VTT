@@ -95,6 +95,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CancelOrCompleteActiveTool();
 
+	UFUNCTION(BlueprintCallable)
+	bool AcceptActiveTool();
+
 	//
 	// Support for tracking World/Local coordinate system global state
 	//
@@ -104,6 +107,18 @@ public:
 
 	//UFUNCTION(BlueprintCallable // unsupported because EToolContextCoordinateSystem is not an uint8
 	EToolContextCoordinateSystem GetCurrentCoordinateSystem() const { return CurrentCoordinateSystem; }
+
+	//
+	// mouse state queries and functions
+	//
+
+public:
+	UFUNCTION(BlueprintCallable)
+	bool IsCapturingMouse() const;
+
+protected:
+	void OnLeftMouseDown();
+	void OnLeftMouseUp();
 
 public:
 	UPROPERTY()
@@ -141,6 +156,13 @@ protected:
 	void OnToolEnded(UInteractiveToolManager* Manager, UInteractiveTool* Tool);
 
 	void OnSceneHistoryStateChange();
+
+	// mouse things
+
+	friend class AToolsContextActor;
+
+	FInputDeviceState CurrentMouseState;
+	bool bPendingMouseStateChange = false;
 
 	// property set keepalivem hack
 	void AddAllPropertySetKeepAlives(UInteractiveTool* Tool);

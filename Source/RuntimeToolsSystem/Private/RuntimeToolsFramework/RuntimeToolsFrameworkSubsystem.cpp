@@ -390,6 +390,57 @@ bool URuntimeToolsFrameworkSubsystem::CancelOrCompleteActiveTool()
 	return false;
 }
 
+bool URuntimeToolsFrameworkSubsystem::AcceptActiveTool()
+{
+	bool bSuccess = false;
+
+	if (ToolsContext && ToolsContext->ToolManager)
+	{
+		bool bActive = ToolsContext->ToolManager->HasActiveTool(EToolSide::Mouse);
+		if (bActive)
+		{
+			bool bCanAccept = ToolsContext->ToolManager->CanAcceptActiveTool(EToolSide::Mouse);
+			if (bCanAccept)
+			{
+				ToolsContext->ToolManager->DeactivateTool(EToolSide::Mouse, EToolShutdownType::Accept);
+				bSuccess = true;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("URuntimeToolsFrameworkSubsystem::AcceptActiveTool - Cannot Accept Active Tool!"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("URuntimeToolsFrameworkSubsystem::AcceptActiveTool - No Active Tool!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("URuntimeToolsFrameworkSubsystem::AcceptActiveTool - ToolsContext is not initialized!"));
+	}
+
+	InternalConsistencyChecks();
+	return bSuccess;
+}
+
+bool URuntimeToolsFrameworkSubsystem::IsCapturingMouse() const
+{
+	return ToolsContext && ToolsContext->InputRouter->HasActiveMouseCapture();
+}
+
+void URuntimeToolsFrameworkSubsystem::OnLeftMouseDown()
+{
+	CurrentMouseState.Mouse.Left.SetStates(true, false, false);
+	bPendingMouseStateChange = true;
+}
+
+void URuntimeToolsFrameworkSubsystem::OnLeftMouseUp()
+{
+	CurrentMouseState.Mouse.Left.SetStates(false, false, true);
+	bPendingMouseStateChange = true;
+}
+
 void URuntimeToolsFrameworkSubsystem::InternalConsistencyChecks()
 {
 	if (GetSceneHistory())

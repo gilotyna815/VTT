@@ -105,6 +105,72 @@ void USceneHistoryManager::EndTransaction()
 	}
 }
 
+void USceneHistoryManager::Undo()
+{
+	int32 NumReverted = 0;
+	while (CurrentIndex > 0)
+	{
+		CurrentIndex = CurrentIndex - 1;
+		UE_LOG(LogTemp, Warning, TEXT("[UNDO] %s"), *Transactions[CurrentIndex].Descritpion.ToString());
+
+		// if transaction has expired, it is effectively a no-op and so we will continue to Undo()
+		bool bContinue = Transactions[CurrentIndex].HasExpired();
+
+		const TArray<FChangeHistoryRecord>& Records = Transactions[CurrentIndex].Records;
+		for (int32 k = Records.Num() - 1; k >= 0; --k)
+		{
+			if (Records[k].TargetObject)
+			{
+				Records[k].ChangeWrapper->Change->Revert(Records[k].TargetObject);
+			}
+			NumReverted++;
+		}
+
+		if (!bContinue)
+		{
+			return;
+		}
+	}
+
+	if (NumReverted > 0)
+	{
+		OnHistoryStateChange.Broadcast();
+	}
+}
+
+void USceneHistoryManager::Redo()
+{
+	int32 NumApplied = 0;
+	while (CurrentIndex < Transactions.Num())
+	{
+		// if transaction has expired, it is effectively a no-op and so we will continue to Redo()
+		bool bContinue = Transactions[CurrentIndex].HasExpired();
+
+		const TArray<FChangeHistoryRecord>& Records = Transactions[CurrentIndex].Records;
+		for (int32 k = 0; k < Records.Num(); ++k)
+		{
+			if (Records[k].TargetObject)
+			{
+				Records[k].ChangeWrapper->Change->Apply(Records[k].TargetObject);
+			}
+			++NumApplied;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("[REDO] %s"), *Transactions[CurrentIndex].Descritpion.ToString());
+		CurrentIndex = CurrentIndex + 1;
+
+		if (!bContinue)
+		{
+			return;
+		}
+	}
+
+	if (NumApplied > 0)
+	{
+		OnHistoryStateChange.Broadcast();
+	}
+}
+
 void USceneHistoryManager::TruncateHistory()
 {
 	// truncate history if we are in undo step

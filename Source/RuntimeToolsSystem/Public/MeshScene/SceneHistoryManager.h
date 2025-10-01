@@ -102,6 +102,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsBuildingTransaction() const { return BeginTransactionDepth > 0; }
 
+	/** Roll back in History to previous state by Revert()'ing intermediate Changes */
+	UFUNCTION(BlueprintCallable)
+	void Undo();
+
+	/** Roll forward in History to next state by Apply()'ing intermediate Changes */
+	UFUNCTION(BlueprintCallable)
+	void Redo();
+
 	/** This delegate is fired whenever we Undo() or Redo() */
 	DECLARE_MULTICAST_DELEGATE(FSceneHistoryStateChangeEvent);
 	FSceneHistoryStateChangeEvent OnHistoryStateChange;

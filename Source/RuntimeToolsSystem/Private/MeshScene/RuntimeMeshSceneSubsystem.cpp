@@ -52,6 +52,57 @@ void URuntimeMeshSceneSubsystem::SetCurrentTransactionsAPI(IToolsContextTransact
 	TransactionsAPI = TransactionsAPIIn;
 }
 
+bool URuntimeMeshSceneSubsystem::DeleteSelectedSceneObjects()
+{
+	return DeleteSelectedSceneObjects(nullptr);
+}
+
+bool URuntimeMeshSceneSubsystem::DeleteSelectedSceneObjects(AActor* SkipActor)
+{
+	if (SelectedSceneObjects.Num() == 0)
+	{
+		return false;
+	}
+
+	if (TransactionsAPI)
+	{
+		TransactionsAPI->BeginUndoTransaction(LOCTEXT("DeleteSelectedObjectsChange", "Delete Objects"));
+	}
+
+	TArray<URuntimeMeshSceneObject*> DeleteObjects = SelectedSceneObjects;
+
+	BeginSelectionChange();
+	SelectedSceneObjects.Reset();
+	EndSelectionChange();
+
+	for (URuntimeMeshSceneObject* SceneObject : DeleteObjects)
+	{
+		if (SceneObject->GetActor() == SkipActor)
+		{
+			continue;
+		}
+
+		RemoveSceneObjectInternal(SceneObject, true);
+
+		if (TransactionsAPI)
+		{
+			TUniquePtr<FAddRemoveSceneObjectChange> RemoveChange = MakeUnique<FAddRemoveSceneObjectChange>();
+			RemoveChange->SceneObject = SceneObject;
+			RemoveChange->bAdded = false;
+			// use SceneObject as target so that transactio will keep it from being GC's
+			TransactionsAPI->AppendChange(SceneObject, MoveTemp(RemoveChange), LOCTEXT("RemoveObjectChange", "Delete SceneObject"));
+		}
+	}
+
+	if (TransactionsAPI)
+	{
+		TransactionsAPI->EndUndoTransaction();
+	}
+
+	OnSelectionModified.Broadcast(this);
+	return true;
+}
+
 void URuntimeMeshSceneSubsystem::SetSelected(URuntimeMeshSceneObject* SceneObject, bool bDeselect, bool bDeselectOthers)
 {
 	if (bDeselect)
@@ -155,6 +206,24 @@ URuntimeMeshSceneObject* URuntimeMeshSceneSubsystem::FindNearestHitObject(FVecto
 	return FoundHit;
 }
 
+void URuntimeMeshSceneSubsystem::AddSceneObjectInternal(URuntimeMeshSceneObject* Object, bool bIsUndoRedo)
+{
+	SceneObjects.Add(Object);
+
+	if (bIsUndoRedo)
+	{
+		Object->GetActor()->RegisterAllComponents();
+	}
+}
+
+void URuntimeMeshSceneSubsystem::RemoveSceneObjectInternal(URuntimeMeshSceneObject* Object, bool bIsUndoRedo)
+{
+	check(SceneObjects.Contains(Object));
+	SceneObjects.Remove(Object);
+
+	Object->GetActor()->UnregisterAllComponents(true);
+}
+
 void URuntimeMeshSceneSubsystem::SetSelectionInternal(const TArray<URuntimeMeshSceneObject*>& NewSceneObjects)
 {
 	if (SelectedSceneObjects.Num() > 0)
@@ -223,5 +292,29 @@ void FMeshSceneSelectionChange::Revert(UObject* Object)
 	if (URuntimeMeshSceneSubsystem* Subsystem = Cast<URuntimeMeshSceneSubsystem>(Object))
 	{
 		Subsystem->SetSelectionInternal(OldSelection);
+	}
+}
+
+void FAddRemoveSceneObjectChange::Apply(UObject* Object)
+{
+	if (bAdded)
+	{
+		URuntimeMeshSceneSubsystem::Get()->AddSceneObjectInternal(SceneObject, true);
+	}
+	else
+	{
+		URuntimeMeshSceneSubsystem::Get()->RemoveSceneObjectInternal(SceneObject, true);
+	}
+}
+
+void FAddRemoveSceneObjectChange::Revert(UObject* Object)
+{
+	if (bAdded)
+	{
+		URuntimeMeshSceneSubsystem::Get()->RemoveSceneObjectInternal(SceneObject, true);
+	}
+	else
+	{
+		URuntimeMeshSceneSubsystem::Get()->AddSceneObjectInternal(SceneObject, true);
 	}
 }

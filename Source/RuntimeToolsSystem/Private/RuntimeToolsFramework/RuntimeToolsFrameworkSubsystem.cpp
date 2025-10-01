@@ -31,6 +31,11 @@
 #include "RuntimeToolsFramework/ToolsContextActor.h"
 #include "MeshScene/RuntimeMeshSceneSubsystem.h"
 
+#include "Slate/SGameLayerManager.h"
+#include "ContextObjectStore.h"
+#include "BaseGizmos/GizmoViewContext.h"
+#include "Slate/SceneViewport.h"
+
 #include "ToolTargetManager.h"
 #include "RuntimeToolsFramework/RuntimeDynamicMeshComponentToolTarget.h"
 
@@ -349,6 +354,206 @@ void URuntimeToolsFrameworkSubsystem::AddPropertySetKeepalives(UInteractiveToolP
 		}
 	}
 }
+
+class FRuntimeToolsFrameworkRenderImpl : public IToolsContextRenderAPI
+{
+public:
+	UToolsContextRenderComponent* RenderComponent;
+	TSharedPtr<FPrimitiveDrawInterface> PDI;
+	const FSceneView* SceneView;
+	FViewCameraState ViewCameraState;
+
+	FRuntimeToolsFrameworkRenderImpl(UToolsContextRenderComponent* RenderComponentIn,
+		const FSceneView* ViewIn,
+		FViewCameraState CameraState)
+		: RenderComponent(RenderComponentIn), SceneView(ViewIn), ViewCameraState(CameraState)
+	{
+		PDI = RenderComponentIn->GetPDIForView(ViewIn);
+	}
+
+	virtual FPrimitiveDrawInterface* GetPrimitiveDrawInterface() override
+	{
+		return PDI.Get();
+	}
+
+	virtual const FSceneView* GetSceneView() override
+	{
+		return SceneView;
+	}
+
+	virtual FViewCameraState GetCameraState() override
+	{
+		return ViewCameraState;
+	}
+
+	virtual EViewInteractionState GetViewInteractionState() override
+	{
+		return EViewInteractionState::Focused;
+	}
+};
+
+//UE_DISABLE_OPTIMIZATION
+void URuntimeToolsFrameworkSubsystem::Tick(float DeltaTime)
+{
+	if (ensure(ContextActor) == false) return;
+
+	// no longer exists...
+	//GizmoRenderingUtil::SetGlobalFocusedEditorSceneVew(nullptr);
+
+	FInputDeviceState InputState = CurrentMouseState;
+	InputState.InputDevice = EInputDevices::Mouse;
+
+	FVector2D MousePosition = FSlateApplication::Get().GetCursorPos();
+	FVector2D LastMousePosition = FSlateApplication::Get().GetLastCursorPos();
+	FModifierKeysState ModifierState = FSlateApplication::Get().GetModifierKeys();
+
+	UGameViewportClient* ViewportClient = TargetWorld->GetGameViewport();
+	TSharedPtr<IGameLayerManager> LayerManager = ViewportClient->GetGameLayerManager();
+	FGeometry ViewportGeometry;
+	if (ensure(LayerManager.IsValid()))
+	{
+		ViewportGeometry = LayerManager->GetViewportWidgetHostGeometry();
+	}
+	// why do we need this scale here? what is it for?
+	FVector2D ViewportMousePos = ViewportGeometry.Scale * ViewportGeometry.AbsoluteToLocal(MousePosition);
+
+	// update modifier keys
+	InputState.SetModifierKeyStates(
+		ModifierState.IsLeftShiftDown(),
+		ModifierState.IsAltDown(),
+		ModifierState.IsControlDown(),
+		ModifierState.IsCommandDown());
+
+	if (ViewportClient)
+	{
+		FSceneViewport* Viewport = ViewportClient->GetGameViewport();
+
+		FEngineShowFlags* ShowFlags = ViewportClient->GetEngineShowFlags();
+		FSceneViewFamilyContext ViewFamily(FSceneViewFamily::ConstructionValues(
+			ViewportClient->Viewport,
+			TargetWorld->Scene,
+			*ShowFlags)
+			.SetRealtimeUpdate(true));
+
+		ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(ContextActor->PlayerController->Player);
+		FVector ViewLocation;
+		FRotator ViewRotation;
+		FSceneView* SceneView = LocalPlayer->CalcSceneView(&ViewFamily,
+			/*out*/ ViewLocation,
+			/*out*/ ViewRotation,
+			LocalPlayer->ViewportClient->Viewport);
+		if (SceneView == nullptr)
+		{
+			return; // abort
+		}
+
+		UGizmoViewContext* GizmoViewContext = ToolsContext->ContextObjectStore->FindContext<UGizmoViewContext>();
+		if (GizmoViewContext)
+		{
+			GizmoViewContext->ResetFromSceneView(*SceneView);
+		}
+
+		ContextQueriesAPI->UpdateActiveViewport(Viewport);
+
+		CurrentViewCameraState.Position = ViewLocation;
+		CurrentViewCameraState.Orientation = ViewRotation.Quaternion();
+		CurrentViewCameraState.HorizontalFOVDegrees = SceneView->FOV;
+		CurrentViewCameraState.AspectRatio = Viewport->GetDesiredAspectRatio(); //ViewportClient->AspectRatio;
+		CurrentViewCameraState.bIsOrthographic = false;
+		CurrentViewCameraState.bIsVR = false;
+		CurrentViewCameraState.OrthoWorldCoordinateWidth = 1;
+
+		FVector4 ScreenPos = SceneView->PixelToScreen(ViewportMousePos.X, ViewportMousePos.Y, 0);
+
+		const FMatrix InvViewMatrix = SceneView->ViewMatrices.GetInvViewMatrix();
+		const FMatrix InvProjMatrix = SceneView->ViewMatrices.GetInvProjectionMatrix();
+
+		const float ScreenX = ScreenPos.X;
+		const float ScreenY = ScreenPos.Y;
+
+		FVector Origin;
+		FVector Direction;
+		if (! ViewportClient->IsOrtho())
+		{
+			Origin = SceneView->ViewMatrices.GetViewOrigin();
+			
+			FVector Temp = InvViewMatrix.TransformVector(
+				FVector(
+					InvProjMatrix.TransformVector(
+						FVector4(
+							ScreenX * GNearClippingPlane,
+							ScreenY * GNearClippingPlane,
+							0.0f,
+							GNearClippingPlane))));
+			Direction = Temp.GetSafeNormal();
+		}
+		else
+		{
+			FVector4 Temp4 = InvViewMatrix.TransformFVector4(
+				InvProjMatrix.TransformFVector4(
+					FVector4(
+						ScreenX * GNearClippingPlane,
+						ScreenY * GNearClippingPlane,
+						0.0f,
+						GNearClippingPlane)));
+			Origin = Temp4.GetSafeNormal();
+
+			Direction = InvViewMatrix.TransformVector(FVector(0, 0, 1)).GetSafeNormal();
+		}
+
+		// fudge factor so we don't hit actor...
+		Origin += 1.0 * Direction;
+
+		InputState.Mouse.Position2D = ViewportMousePos;
+		InputState.Mouse.Delta2D = CurrentMouseState.Mouse.Position2D - PrevMousePosition;
+		PrevMousePosition = InputState.Mouse.Position2D;
+		InputState.Mouse.WorldRay = FRay(Origin, Direction);
+
+		// if we are in camera control we don't send any events
+		bool bInCameraControl = (ContextActor->GetCurrentInteractionMode() != EToolActorInteractionMode::NoInteraction);
+		if (bInCameraControl)
+		{
+			ensure(bPendingMouseStateChange == false);
+			ensure(ToolsContext->InputRouter->HasActiveMouseCapture() == false);
+			//ToolsContext->InputRouter->PostHoverInputEvent(InputState);
+		}
+		else if (bPendingMouseStateChange || ToolsContext->InputRouter->HasActiveMouseCapture())
+		{
+			ToolsContext->InputRouter->PostInputEvent(InputState);
+		}
+		else
+		{
+			ToolsContext->InputRouter->PostHoverInputEvent(InputState);
+		}
+
+		// clear down or up flags now that we have sent event
+		if (bPendingMouseStateChange)
+		{
+			if (CurrentMouseState.Mouse.Left.bDown)
+			{
+				CurrentMouseState.Mouse.Left.SetStates(false, true, false);
+			}
+			else
+			{
+				CurrentMouseState.Mouse.Left.SetStates(false, false, false);
+			}
+			bPendingMouseStateChange = false;
+		}
+
+		// tick things
+		ToolsContext->ToolManager->Tick(DeltaTime);
+		ToolsContext->GizmoManager->Tick(DeltaTime);
+
+		// render things
+		FRuntimeToolsFrameworkRenderImpl RenderAPI(PDIRenderComponent, SceneView, CurrentViewCameraState);
+		ToolsContext->ToolManager->Render(&RenderAPI);
+		ToolsContext->GizmoManager->Render(&RenderAPI);
+
+		// force rendering flush so that PDI lines get drawn
+		FlushRenderingCommands();
+	}
+}
+//UE_ENABLE_OPTIMIZATION
 
 void URuntimeToolsFrameworkSubsystem::SetContextActor(AToolsContextActor* ActorIn)
 {

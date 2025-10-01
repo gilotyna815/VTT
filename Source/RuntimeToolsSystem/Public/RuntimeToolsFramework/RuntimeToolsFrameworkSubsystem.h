@@ -161,8 +161,12 @@ protected:
 
 	friend class AToolsContextActor;
 
+	FVector2D PrevMousePosition = FVector2D::ZeroVector;
+
 	FInputDeviceState CurrentMouseState;
 	bool bPendingMouseStateChange = false;
+
+	FViewCameraState CurrentViewCameraState;
 
 	// property set keepalivem hack
 	void AddAllPropertySetKeepAlives(UInteractiveTool* Tool);

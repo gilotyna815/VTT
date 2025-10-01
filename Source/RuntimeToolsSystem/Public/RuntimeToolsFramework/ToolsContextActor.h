@@ -75,6 +75,9 @@ public:
 	UPROPERTY()
 	APlayerController* PlayerController;
 
+	// return current interaction mode, ie are we in a camera interaction or not
+	EToolActorInteractionMode GetCurrentInteractionMode() { return CurrentInteractionMode; }
+
 protected:
 	// Called when the game starts or spawned
 	virtual void BeginPlay() override;

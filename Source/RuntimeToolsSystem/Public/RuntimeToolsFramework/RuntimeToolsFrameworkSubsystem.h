@@ -109,6 +109,13 @@ public:
 	EToolContextCoordinateSystem GetCurrentCoordinateSystem() const { return CurrentCoordinateSystem; }
 
 	//
+	// random utility BP functions
+	//
+
+	UFUNCTION(BlueprintCallable)
+	URuntimeMeshSceneObject* ImportMeshSceneObject(const FString ImportPath, bool bFlipOrientation);
+
+	//
 	// mouse state queries and functions
 	//
 

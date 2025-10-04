@@ -71,6 +71,9 @@ public:
 	//
 
 	UFUNCTION(BlueprintCallable, Category = "RuntimeMeshSceneObject")
+	void SetAllMaterials(UMaterialInterface* SetToMaterial);
+
+	UFUNCTION(BlueprintCallable, Category = "RuntimeMeshSceneObject")
 	void SetToHighlightMaterial(UMaterialInterface* SetToMaterial);
 
 	UFUNCTION(BlueprintCallable, Category = "RuntimeMeshSceneObject")

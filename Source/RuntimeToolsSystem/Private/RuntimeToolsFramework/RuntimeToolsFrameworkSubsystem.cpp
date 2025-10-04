@@ -659,6 +659,26 @@ bool URuntimeToolsFrameworkSubsystem::AcceptActiveTool()
 	return bSuccess;
 }
 
+URuntimeMeshSceneObject* URuntimeToolsFrameworkSubsystem::ImportMeshSceneObject(const FString ImportPath, bool bFlipOrientation)
+{
+	FString UsePath = ImportPath;
+	if (FPaths::FileExists(UsePath) == false && FPaths::IsRelative(UsePath))
+	{
+		UsePath = FPaths::ProjectContentDir() + ImportPath;
+	}
+
+	UGeneratedMesh* ImportMesh = NewObject<UGeneratedMesh>();
+	if (ImportMesh->ReadMeshFromFile(UsePath, bFlipOrientation) == false)
+	{
+		ImportMesh->AppendSphere(200, 8, 8);
+	}
+
+	URuntimeMeshSceneObject* SceneObject = URuntimeMeshSceneSubsystem::Get()->CreateNewSceneObject();
+	SceneObject->Initialize(TargetWorld, ImportMesh->GetMesh().Get());
+
+	return SceneObject;
+}
+
 bool URuntimeToolsFrameworkSubsystem::IsCapturingMouse() const
 {
 	return ToolsContext && ToolsContext->InputRouter->HasActiveMouseCapture();

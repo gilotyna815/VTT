@@ -145,6 +145,16 @@ void URuntimeMeshSceneObject::UpdateComponentMaterials(bool bForceRefresh)
 	}
 }
 
+void URuntimeMeshSceneObject::SetAllMaterials(UMaterialInterface* SetToMaterial)
+{
+	int32 NumMaterials = Materials.Num();
+	for (int32 k = 0; k < NumMaterials; ++k)
+	{
+		Materials[k] = SetToMaterial;
+	}
+	UpdateComponentMaterials(true);
+}
+
 void URuntimeMeshSceneObject::SetToHighlightMaterial(UMaterialInterface* SetToMaterial)
 {
 	UMeshComponent* Component = GetMeshComponent();

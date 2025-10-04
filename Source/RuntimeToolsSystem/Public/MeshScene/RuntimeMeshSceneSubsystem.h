@@ -67,9 +67,15 @@ public:
 public:
 
 	UPROPERTY()
+	UMaterialInterface* StandardMaterial;
+
+	UPROPERTY()
 	UMaterialInterface* SelectedMaterial;
 
 public:
+
+	UFUNCTION(BlueprintCallable)
+	URuntimeMeshSceneObject* CreateNewSceneObject();
 
 	UFUNCTION(BlueprintCallable)
 	bool DeleteSelectedSceneObjects();

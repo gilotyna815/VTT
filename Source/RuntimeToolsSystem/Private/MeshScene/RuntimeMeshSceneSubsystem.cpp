@@ -27,6 +27,8 @@
 
 #include "MeshScene/RuntimeMeshSceneSubsystem.h"
 
+#include "MaterialDomain.h"
+
 #define LOCTEXT_NAMESPACE "URuntimeMeshSceneSubsystem"
 
 URuntimeMeshSceneSubsystem* URuntimeMeshSceneSubsystem::InstanceSingleton = nullptr;
@@ -35,6 +37,20 @@ void URuntimeMeshSceneSubsystem::InitializeSingleton(URuntimeMeshSceneSubsystem*
 {
 	check(InstanceSingleton == nullptr);
 	InstanceSingleton = Subsystem;
+
+	// TODO: Expose these somehow?
+
+	UMaterial* DefaultObjectMaterial =
+		LoadObject<UMaterial>(nullptr, TEXT("/Game/RuntimeToolsSystem/DefaultObjectMaterial"));
+	InstanceSingleton->StandardMaterial =
+		(DefaultObjectMaterial) ? DefaultObjectMaterial : UMaterial::GetDefaultMaterial(MD_Surface);
+
+	UMaterial* SelectionMaterial =
+		LoadObject<UMaterial>(nullptr, TEXT("/Game/RuntimeToolsSystem/SelectedMaterial"));
+	InstanceSingleton->SelectedMaterial =
+		(SelectionMaterial) ? SelectionMaterial : UMaterial::GetDefaultMaterial(MD_Surface);
+
+	//==>
 }
 
 URuntimeMeshSceneSubsystem* URuntimeMeshSceneSubsystem::Get()
@@ -50,6 +66,25 @@ void URuntimeMeshSceneSubsystem::Deinitialize()
 void URuntimeMeshSceneSubsystem::SetCurrentTransactionsAPI(IToolsContextTransactionsAPI* TransactionsAPIIn)
 {
 	TransactionsAPI = TransactionsAPIIn;
+}
+
+URuntimeMeshSceneObject* URuntimeMeshSceneSubsystem::CreateNewSceneObject()
+{
+	URuntimeMeshSceneObject* SceneObject = NewObject<URuntimeMeshSceneObject>(this);
+	AddSceneObjectInternal(SceneObject, false);
+
+	if (TransactionsAPI)
+	{
+		TUniquePtr<FAddRemoveSceneObjectChange> AddChange = MakeUnique<FAddRemoveSceneObjectChange>();
+		AddChange->SceneObject = SceneObject;
+		AddChange->bAdded = true;
+		// use SceneObject as target so that transaction will keep it from being GC'd
+		TransactionsAPI->AppendChange(SceneObject, MoveTemp(AddChange), LOCTEXT("AddObjectChange", "Add SceneObject"));
+	}
+
+	SceneObject->SetAllMaterials(StandardMaterial);
+
+	return SceneObject;
 }
 
 bool URuntimeMeshSceneSubsystem::DeleteSelectedSceneObjects()

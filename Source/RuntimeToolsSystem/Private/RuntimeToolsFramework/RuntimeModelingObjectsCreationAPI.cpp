@@ -42,3 +42,16 @@ URuntimeModelingObjectsCreationAPI* URuntimeModelingObjectsCreationAPI::Register
 	ToolsContext->ContextObjectStore->AddContextObject(NewCreationAPI);
 	return NewCreationAPI;
 }
+
+bool URuntimeModelingObjectsCreationAPI::Deregister(UInteractiveToolsContext* ToolsContext)
+{
+	check(ToolsContext);
+
+	if (URuntimeModelingObjectsCreationAPI* FoundAPI =
+		ToolsContext->ContextObjectStore->FindContext<URuntimeModelingObjectsCreationAPI>())
+	{
+		ToolsContext->ContextObjectStore->RemoveContextObject(FoundAPI);
+		return true;
+	}
+	return false;
+}

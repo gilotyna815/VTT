@@ -66,9 +66,9 @@ protected:
 	//
 public:
 	void InitializeToolsContext(UWorld* TargetWorld);
-	virtual void Tick(float DeltaTime);
-	void ShutdownToolsContext();
 	void SetContextActor(AToolsContextActor* ActorIn);
+	virtual void Tick(float DeltaTime); 
+	void ShutdownToolsContext();
 
 	//
 	// UGameInstanceSubsystem API implementation

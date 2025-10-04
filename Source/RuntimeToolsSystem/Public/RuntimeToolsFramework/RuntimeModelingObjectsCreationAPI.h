@@ -56,4 +56,6 @@ class RUNTIMETOOLSSYSTEM_API URuntimeModelingObjectsCreationAPI : public UModeli
 public:
 	// Call this to provide and instance of URuntimeModelingObjectsCreationAPI to the Tools
 	static URuntimeModelingObjectsCreationAPI* Register(UInteractiveToolsContext* ToolsContext);
+	// Call this to clean up the Register'd instance
+	static bool Deregister(UInteractiveToolsContext* ToolsContext);
 };

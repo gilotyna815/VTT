@@ -286,7 +286,37 @@ void URuntimeToolsFrameworkSubsystem::ShutdownToolsContext()
 	{
 		CancelOrCompleteActiveTool();
 
-		// TransformInteraction->Shutdown(); // <==
+		TransformInteraction->Shutdown();
+
+		// unregister transform gizmo helper
+		UE::TransformGizmoUtil::DeregisterTransformGizmoContextObject(ToolsContext);
+
+		// unregister objection creation helper
+		URuntimeModelingObjectsCreationAPI::Deregister(ToolsContext);
+
+		ToolsContext->Shutdown();
+	}
+
+	// get rid of the PDI rendering helper Actor
+	if (PDIRenderActor)
+	{
+		PDIRenderActor->Destroy();
+		PDIRenderActor = nullptr;
+		PDIRenderComponent = nullptr;
+	}
+
+	TargetWorld = nullptr;
+	ToolsContext = nullptr;
+	ContextActor = nullptr;
+
+	ContextQueriesAPI = nullptr;
+	ContextTransactionsAPI = nullptr;
+
+	SelectionInteraction = nullptr;
+	TransformInteraction = nullptr;
+
+	bIsShuttingDown = false;
+}
 
 void URuntimeToolsFrameworkSubsystem::OnToolStarted(UInteractiveToolManager* Manager, UInteractiveTool* Tool)
 {

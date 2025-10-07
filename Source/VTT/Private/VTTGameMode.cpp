@@ -64,7 +64,7 @@ void AVTTGameMode::InitializeToolsSystem()
 	URuntimeMeshSceneSubsystem::InitializeSingleton(SceneSystem);
 
 	// create Tools subsystem
-	ToolsSystem = UGameInstance::GetSubsystem<URuntimeToolsFrameworkSubsystem>(GameInstance); // <==
+	ToolsSystem = UGameInstance::GetSubsystem<URuntimeToolsFrameworkSubsystem>(GameInstance);
 	URuntimeToolsFrameworkSubsystem::InitializeSingleton(ToolsSystem);
 
 	check(SceneSystem && ToolsSystem);

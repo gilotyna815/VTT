@@ -26,6 +26,7 @@
 */
 
 #include "Interaction/SceneObjectSelectionInteraction.h"
+
 #include "MeshScene/RuntimeMeshSceneSubsystem.h"
 
 void USceneObjectSelectionInteraction::Initialize(TUniqueFunction<bool()> CanChangeSelectionCallbackIn)
@@ -54,7 +55,8 @@ FInputRayHit USceneObjectSelectionInteraction::IsHitByClick(const FInputDeviceRa
 	FVector HitPoint, BaryCoordinates;
 	float HitDistance;
 	int32 HitTriangle;
-	URuntimeMeshSceneObject* HitObject = URuntimeMeshSceneSubsystem::Get()->FindNearestHitObject(ClickPos.WorldRay.Origin, ClickPos.WorldRay.Direction, HitPoint, HitDistance, HitTriangle, BaryCoordinates);
+	URuntimeMeshSceneObject* HitObject = URuntimeMeshSceneSubsystem::Get()->FindNearestHitObject(
+		ClickPos.WorldRay.Origin, ClickPos.WorldRay.Direction, HitPoint, HitDistance, HitTriangle, BaryCoordinates);
 
 	if (HitObject != nullptr)
 	{
@@ -81,7 +83,8 @@ void USceneObjectSelectionInteraction::OnClicked(const FInputDeviceRay& ClickPos
 	FVector HitPoint, BaryCoordinates;
 	float HitDistance;
 	int32 HitTriangle;
-	URuntimeMeshSceneObject* HitObject = URuntimeMeshSceneSubsystem::Get()->FindNearestHitObject(ClickPos.WorldRay.Origin, ClickPos.WorldRay.Direction, HitPoint, HitDistance, HitTriangle, BaryCoordinates);
+	URuntimeMeshSceneObject* HitObject = URuntimeMeshSceneSubsystem::Get()->FindNearestHitObject(
+		ClickPos.WorldRay.Origin, ClickPos.WorldRay.Direction, HitPoint, HitDistance, HitTriangle, BaryCoordinates);
 
 	if (HitObject != nullptr)
 	{

@@ -27,15 +27,16 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "BaseBehaviors/BehaviorTargetInterfaces.h"
 #include "BaseBehaviors/SingleClickBehavior.h"
 #include "InputBehaviorSet.h"
+
 #include "SceneObjectSelectionInteraction.generated.h"
 
 /**
- * USceneObjectSelectionInteraction implements standard mouse-click selection interaction of "Scene Objects", ie the URuntimeMeshSceneObjects in the current URuntimeMeshSceneSubsystem.
+ * USceneObjectSelectionInteraction implements standard mouse-click selection
+ * interaction of "Scene Objects", ie the URuntimeMeshSceneObjects in the current
+ * URuntimeMeshSceneSubsystem.
  * 
  * - Left-Click on object changes active selection to that object
  * - Left-Click on 'background' clears active selection
@@ -45,7 +46,8 @@
  * Currently Hovering is not supported, but this would be relatively easy to add
  */
 UCLASS()
-class RUNTIMETOOLSSYSTEM_API USceneObjectSelectionInteraction : public UObject, public IInputBehaviorSource, public IClickBehaviorTarget
+class RUNTIMETOOLSSYSTEM_API USceneObjectSelectionInteraction
+	: public UObject, public IInputBehaviorSource, public IClickBehaviorTarget
 {
 	GENERATED_BODY()
 
@@ -53,7 +55,9 @@ public:
 
 	/**
 	 * Set up the Interaction, create and register Behaviors/etc.
-	 * @param CanChangeSelectionCallbackIn this function will be called to determine if the current Selection is allowed to be modified (for example, when a Tool is active, we may wish to lock selection)
+	 * @param CanChangeSelectionCallbackIn this function will be called to determine if
+	 * the current Selection is allowed to be modified (for example, when a Tool is
+	 * active, we may wish to lock selection)
 	 */
 	void Initialize(TUniqueFunction<bool()> CanChangeSelectionCallbackIn);
 

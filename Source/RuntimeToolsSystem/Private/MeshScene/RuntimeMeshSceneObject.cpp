@@ -180,7 +180,8 @@ bool URuntimeMeshSceneObject::IntersectRay(FVector RayOrigin, FVector RayDirecti
 
 	UE::Geometry::FTransformSRT3d ActorToWorld(GetActor()->GetActorTransform());
 	FVector3d WorldDirection(RayDirection); WorldDirection.Normalize();
-	FRay3d LocalRay(ActorToWorld.InverseTransformPosition((FVector3d)RayOrigin), ActorToWorld.InverseTransformNormal(WorldDirection));
+	FRay3d LocalRay(ActorToWorld.InverseTransformPosition((FVector3d)RayOrigin),
+		ActorToWorld.InverseTransformNormal(WorldDirection));
 	UE::Geometry::IMeshSpatial::FQueryOptions QueryOptions;
 	if (MaxDistance > 0)
 	{

@@ -251,7 +251,7 @@ void URuntimeToolsFrameworkSubsystem::InitializeToolsContext(UWorld* TargetWorld
 	TransformInteraction = NewObject<USceneObjectTransformInteraction>();
 	TransformInteraction->Initialize([this]()
 	{
-		return false;
+		return HaveActiveTool() == false;
 	});
 
 	// create PDI rendering bridge Component
@@ -507,9 +507,9 @@ void URuntimeToolsFrameworkSubsystem::Tick(float DeltaTime)
 		{
 			Origin = SceneView->ViewMatrices.GetViewOrigin();
 			
-			FVector Temp = InvViewMatrix.TransformVector(
+			FVector4 Temp = InvViewMatrix.TransformVector(
 				FVector(
-					InvProjMatrix.TransformVector(
+					InvProjMatrix.TransformFVector4(
 						FVector4(
 							ScreenX * GNearClippingPlane,
 							ScreenY * GNearClippingPlane,
@@ -519,15 +519,13 @@ void URuntimeToolsFrameworkSubsystem::Tick(float DeltaTime)
 		}
 		else
 		{
-			FVector4 Temp4 = InvViewMatrix.TransformFVector4(
+			Origin = InvViewMatrix.TransformFVector4(
 				InvProjMatrix.TransformFVector4(
 					FVector4(
-						ScreenX * GNearClippingPlane,
-						ScreenY * GNearClippingPlane,
-						0.0f,
-						GNearClippingPlane)));
-			Origin = Temp4.GetSafeNormal();
-
+						ScreenX,
+						ScreenY,
+						0.5f,
+						1.0f)));
 			Direction = InvViewMatrix.TransformVector(FVector(0, 0, 1)).GetSafeNormal();
 		}
 

@@ -103,8 +103,8 @@ void AToolsContextActor::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	//UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("StandardLeftMouseButton", EKeys::LeftMouseButton));
 	//PlayerInputComponent->BindAction("StandardLeftMouseButton", IE_Pressed, this, &AToolsContextActor::OnLeftMouseDown);
 	//PlayerInputComponent->BindAction("StandardLeftMouseButton", IE_Released, this, &AToolsContextActor::OnLeftMouseUp);
-	InputComponent->BindAction("LeftMouseButtonAction", IE_Pressed, this, &AToolsContextActor::OnLeftMouseDown);
-	InputComponent->BindAction("LeftMouseButtonAction", IE_Released, this, &AToolsContextActor::OnLeftMouseUp);
+	PlayerInputComponent->BindAction("LeftMouseButtonAction", IE_Pressed, this, &AToolsContextActor::OnLeftMouseDown);
+	PlayerInputComponent->BindAction("LeftMouseButtonAction", IE_Released, this, &AToolsContextActor::OnLeftMouseUp);
 
 	InputComponent->BindAxis("MouseMovementX", this, &AToolsContextActor::OnMouseMoveX);
 	//PlayerInputComponent->BindAxis("MouseMovementX", this, &AToolsContextActor::OnMouseMoveX);
@@ -195,10 +195,6 @@ void AToolsContextActor::OnAltKeyUp()
 
 void AToolsContextActor::OnLeftMouseDown()
 {
-	/// debugging
-	UE_LOG(LogTemp, Warning, TEXT("Left Down"));
-	ADefaultPawn::MoveUp_World(-10000000.0);
-
 	bIsLeftMouseDown = true;
 
 	// if we are in right-mouse cam mode and press left, ignore it
@@ -220,10 +216,6 @@ void AToolsContextActor::OnLeftMouseDown()
 
 void AToolsContextActor::OnLeftMouseUp()
 {
-	/// debugging
-	UE_LOG(LogTemp, Warning, TEXT("Left Up"));
-	ADefaultPawn::MoveUp_World(10000000.0);
-
 	bIsLeftMouseDown = false;
 
 	// if we are in right-mouse cam mode and press left, ignore it
@@ -239,7 +231,7 @@ void AToolsContextActor::OnLeftMouseUp()
 	}
 	else
 	{
-		ToolsSystem->OnLeftMouseDown();
+		ToolsSystem->OnLeftMouseUp();
 	}
 }
 

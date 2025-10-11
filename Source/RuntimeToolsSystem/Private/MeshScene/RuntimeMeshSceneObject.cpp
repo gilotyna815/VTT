@@ -97,6 +97,11 @@ void URuntimeMeshSceneObject::Initialize(UWorld* TargetWorld, const FDynamicMesh
 	UpdateComponentMaterials(false);
 }
 
+void URuntimeMeshSceneObject::SetTransform(FTransform Transform)
+{
+	GetActor()->SetActorTransform(Transform);
+}
+
 ADynamicMeshBaseActor* URuntimeMeshSceneObject::GetActor()
 {
 	return SimpleDynamicMeshActor;

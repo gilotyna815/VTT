@@ -90,10 +90,22 @@ public:
 	//
 
 	UFUNCTION(BlueprintCallable)
+	UInteractiveTool* BeginToolByName(FString Name);
+
+	UFUNCTION(BlueprintCallable)
 	bool HaveActiveTool();
 
 	UFUNCTION(BlueprintCallable)
+	UInteractiveTool* GetActiveTool();
+
+	UFUNCTION(BlueprintCallable)
 	bool CancelOrCompleteActiveTool();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsActiveToolAcceptCancelType();
+
+	UFUNCTION(BlueprintCallable)
+	bool CanAcceptActiveTool();
 
 	UFUNCTION(BlueprintCallable)
 	bool AcceptActiveTool();

@@ -44,6 +44,7 @@ public:
 	{
 		TArray<UToolsContextRenderComponent::FPDILine> Lines;
 		TArray<UToolsContextRenderComponent::FPDIPoint> Points;
+		GetGeometryQueryFunc(Lines, Points);
 
 		for (int32 ViewIndex = 0; ViewIndex < Views.Num(); ViewIndex++)
 		{

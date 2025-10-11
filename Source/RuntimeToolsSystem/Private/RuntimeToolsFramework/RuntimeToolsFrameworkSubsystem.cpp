@@ -592,11 +592,49 @@ void URuntimeToolsFrameworkSubsystem::SetContextActor(AToolsContextActor* ActorI
 	}
 }
 
+UInteractiveTool* URuntimeToolsFrameworkSubsystem::BeginToolByName(FString Name)
+{
+	if (ToolsContext && ToolsContext->ToolManager)
+	{
+		bool bFound = ToolsContext->ToolManager->SelectActiveToolType(EToolSide::Mouse, Name);
+		if (bFound)
+		{
+			bool bActivated = ToolsContext->ToolManager->ActivateTool(EToolSide::Mouse);
+			if (bActivated)
+			{
+				UInteractiveTool* NewTool = ToolsContext->ToolManager->GetActiveTool(EToolSide::Mouse);
+				return NewTool;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning,
+					TEXT("URuntimeToolsFrameworkSubsystem::BeginToolByName - Failed to Activate Tool of type %s!"), *Name);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("URuntimeToolsFrameworkSubsystem::BeginToolByName - Tool Type %s Not Registered!"), *Name);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("URuntimeToolsFrameworkSubsystem::BeginToolByName - ToolsContext is not initialized!"));
+	}
+	return nullptr;
+}
+
 bool URuntimeToolsFrameworkSubsystem::HaveActiveTool()
 {
 	return (ToolsContext != nullptr)
 		&& (ToolsContext->ToolManager != nullptr)
 		&& ToolsContext->ToolManager->HasActiveTool(EToolSide::Mouse);
+}
+
+UInteractiveTool* URuntimeToolsFrameworkSubsystem::GetActiveTool()
+{
+	return HaveActiveTool() ? ToolsContext->ToolManager->GetActiveTool(EToolSide::Mouse) : nullptr;
 }
 
 bool URuntimeToolsFrameworkSubsystem::CancelOrCompleteActiveTool()
@@ -621,6 +659,21 @@ bool URuntimeToolsFrameworkSubsystem::CancelOrCompleteActiveTool()
 
 	InternalConsistencyChecks();
 	return false;
+}
+
+bool URuntimeToolsFrameworkSubsystem::IsActiveToolAcceptCancelType()
+{
+	return (ToolsContext != nullptr)
+		&& (ToolsContext->ToolManager != nullptr)
+		&& ToolsContext->ToolManager->HasActiveTool(EToolSide::Mouse)
+		&& ToolsContext->ToolManager->GetActiveTool(EToolSide::Mouse)->HasAccept();
+}
+
+bool URuntimeToolsFrameworkSubsystem::CanAcceptActiveTool()
+{
+	return (ToolsContext != nullptr)
+		&& (ToolsContext->ToolManager != nullptr)
+		&& ToolsContext->ToolManager->CanAcceptActiveTool(EToolSide::Mouse);
 }
 
 bool URuntimeToolsFrameworkSubsystem::AcceptActiveTool()

@@ -54,6 +54,9 @@ class RUNTIMETOOLSSYSTEM_API URuntimeModelingObjectsCreationAPI : public UModeli
 	GENERATED_BODY()
 
 public:
+
+	virtual FCreateMeshObjectResult CreateMeshObject(const FCreateMeshObjectParams& CreateMeshParams) override;
+
 	// Call this to provide and instance of URuntimeModelingObjectsCreationAPI to the Tools
 	static URuntimeModelingObjectsCreationAPI* Register(UInteractiveToolsContext* ToolsContext);
 	// Call this to clean up the Register'd instance

@@ -29,6 +29,33 @@
 
 #include "InteractiveToolsContext.h"
 #include "ContextObjectStore.h"
+#include "MeshScene/RuntimeMeshSceneSubsystem.h"
+
+FCreateMeshObjectResult URuntimeModelingObjectsCreationAPI::CreateMeshObject(const FCreateMeshObjectParams& CreateMeshParams)
+{
+	// create new SceneObject
+	URuntimeMeshSceneObject* SceneObject = URuntimeMeshSceneSubsystem::Get()->CreateNewSceneObject();
+
+	// initialize the mesh, depending on whether we were passed a FMeshDescription or a FDynamicMesh3
+	if (CreateMeshParams.MeshType == ECreateMeshObjectSourceMeshType::MeshDescription)
+	{
+		SceneObject->Initialize(CreateMeshParams.TargetWorld, & CreateMeshParams.MeshDescription.GetValue());
+	}
+	else
+	{
+		SceneObject->Initialize(CreateMeshParams.TargetWorld, & CreateMeshParams.DynamicMesh.GetValue());
+	}
+
+	SceneObject->SetTransform(CreateMeshParams.Transform);
+
+	// return the created Actor and Component
+	FCreateMeshObjectResult Result;
+	Result.ResultCode = ECreateModelingObjectResult::Ok;
+	Result.NewActor = SceneObject->GetActor();
+	Result.NewComponent = SceneObject->GetMeshComponent();
+
+	return Result;
+}
 
 URuntimeModelingObjectsCreationAPI* URuntimeModelingObjectsCreationAPI::Register(UInteractiveToolsContext* ToolsContext)
 {

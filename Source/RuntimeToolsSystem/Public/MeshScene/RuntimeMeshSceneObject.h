@@ -60,6 +60,9 @@ public:
 	void Initialize(UWorld* TargetWorld, const FMeshDescription* InitialMeshDescription);
 	void Initialize(UWorld* TargetWorld, const FDynamicMesh3* InitialMesh);
 
+	// set the 3D transform of this SceneObject
+	void SetTransform(FTransform Transform);
+
 	// get the Actor that represents this SceneObject
 	ADynamicMeshBaseActor* GetActor();
 

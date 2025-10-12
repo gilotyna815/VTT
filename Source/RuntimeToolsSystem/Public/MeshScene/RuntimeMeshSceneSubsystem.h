@@ -35,6 +35,7 @@
 #include "RuntimeMeshSceneSubsystem.generated.h"
 
 class FMeshSceneSelectionChange;
+class FAddRemoveSceneObjectChange;
 
 /**
  * URuntimeMeshSceneSubsystem manages a "Scene" of "SceneObjects", currently only URuntimeMeshSceneObject (SO).

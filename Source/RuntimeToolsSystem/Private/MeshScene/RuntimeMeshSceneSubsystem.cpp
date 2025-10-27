@@ -87,6 +87,18 @@ URuntimeMeshSceneObject* URuntimeMeshSceneSubsystem::CreateNewSceneObject()
 	return SceneObject;
 }
 
+URuntimeMeshSceneObject* URuntimeMeshSceneSubsystem::FindSceneObjectByActor(AActor* Actor)
+{
+	for (URuntimeMeshSceneObject* SceneObject : SceneObjects)
+	{
+		if (SceneObject->GetActor() == Actor)
+		{
+			return SceneObject;
+		}
+	}
+	return nullptr;
+}
+
 bool URuntimeMeshSceneSubsystem::DeleteSelectedSceneObjects()
 {
 	return DeleteSelectedSceneObjects(nullptr);

@@ -79,6 +79,9 @@ public:
 	URuntimeMeshSceneObject* CreateNewSceneObject();
 
 	UFUNCTION(BlueprintCallable)
+	URuntimeMeshSceneObject* FindSceneObjectByActor(AActor* Actor);
+
+	UFUNCTION(BlueprintCallable)
 	bool DeleteSelectedSceneObjects();
 	bool DeleteSelectedSceneObjects(AActor* SkipActor);
 

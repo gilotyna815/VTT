@@ -710,6 +710,18 @@ bool URuntimeToolsFrameworkSubsystem::AcceptActiveTool()
 	return bSuccess;
 }
 
+void URuntimeToolsFrameworkSubsystem::ToggleCurrentCoordinateSystem()
+{
+	int32 CurrentCoordinateSystem32 = (int)CurrentCoordinateSystem;
+	int32 NewCoordinateSystem = (CurrentCoordinateSystem32 + 1) % 2;
+	SetCurrentCoordinateSystem((EToolContextCoordinateSystem)(NewCoordinateSystem));
+}
+
+void URuntimeToolsFrameworkSubsystem::SetCurrentCoordinateSystem(EToolContextCoordinateSystem CoordinateSystem)
+{
+	CurrentCoordinateSystem = CoordinateSystem;
+}
+
 URuntimeMeshSceneObject* URuntimeToolsFrameworkSubsystem::ImportMeshSceneObject(const FString ImportPath, bool bFlipOrientation)
 {
 	FString UsePath = ImportPath;

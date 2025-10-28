@@ -117,8 +117,17 @@ public:
 	UPROPERTY()
 	EToolContextCoordinateSystem CurrentCoordinateSystem = EToolContextCoordinateSystem::World;
 
-	//UFUNCTION(BlueprintCallable // unsupported because EToolContextCoordinateSystem is not an uint8
+	//UFUNCTION(BlueprintCallable) // unsupported because EToolContextCoordinateSystem is not an uint8
 	EToolContextCoordinateSystem GetCurrentCoordinateSystem() const { return CurrentCoordinateSystem; }
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleCurrentCoordinateSystem();
+
+	//UFUNCTION(BlueprintCallable) // unsupported because EToolContextCoordinateSystem is not an unint8
+	void SetCurrentCoordinateSystem(EToolContextCoordinateSystem CoordinateSystem);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsWorldCoordinateSystem() { return CurrentCoordinateSystem == EToolContextCoordinateSystem::World; }
 
 	//
 	// random utility BP functions

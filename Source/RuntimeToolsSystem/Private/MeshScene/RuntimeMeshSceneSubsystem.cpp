@@ -365,3 +365,5 @@ void FAddRemoveSceneObjectChange::Revert(UObject* Object)
 		URuntimeMeshSceneSubsystem::Get()->AddSceneObjectInternal(SceneObject, true);
 	}
 }
+
+#undef LOCTEXT_NAMESPACE

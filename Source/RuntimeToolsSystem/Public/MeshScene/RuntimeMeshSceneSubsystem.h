@@ -73,6 +73,9 @@ public:
 	UPROPERTY()
 	UMaterialInterface* SelectedMaterial;
 
+	UPROPERTY()
+	UMaterialInterface* WireframeMaterial;
+
 public:
 
 	UFUNCTION(BlueprintCallable)

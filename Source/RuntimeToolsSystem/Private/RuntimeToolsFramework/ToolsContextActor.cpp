@@ -42,10 +42,6 @@ AToolsContextActor::AToolsContextActor()
 void AToolsContextActor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UGameInstance* GameInstance = GetGameInstance();
-	ToolsSystem = UGameInstance::GetSubsystem<URuntimeToolsFrameworkSubsystem>(GameInstance);
-	ToolsSystem->SetContextActor(this);
 }
 
 void AToolsContextActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -64,6 +60,11 @@ void AToolsContextActor::PossessedBy(AController* ControllerIn)
 
 void AToolsContextActor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	// establish connection to local tools framework
+	UGameInstance* GameInstance = GetGameInstance();
+	ToolsSystem = UGameInstance::GetSubsystem<URuntimeToolsFrameworkSubsystem>(GameInstance);
+	ToolsSystem->SetContextActor(this);
+
 	// do not want default player input behavior
 	//Super::SetupPlayerInputComponent(PlayerInputComponent
 

@@ -425,7 +425,7 @@ public:
 //UE_DISABLE_OPTIMIZATION
 void URuntimeToolsFrameworkSubsystem::Tick(float DeltaTime)
 {
-	if (ensure(ContextActor) == false) return;
+	if (ContextActor == nullptr) return;
 
 	// no longer exists...
 	//GizmoRenderingUtil::SetGlobalFocusedEditorSceneVew(nullptr);
@@ -465,7 +465,8 @@ void URuntimeToolsFrameworkSubsystem::Tick(float DeltaTime)
 			*ShowFlags)
 			.SetRealtimeUpdate(true));
 
-		ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(ContextActor->PlayerController->Player);
+		//ULocalPlayer* LocalPlayer = ContextActor->PlayerController->GetLocalPlayer();
+		ULocalPlayer* LocalPlayer = GetGameInstance()->GetFirstLocalPlayerController(TargetWorld)->GetLocalPlayer();
 		FVector ViewLocation;
 		FRotator ViewRotation;
 		FSceneView* SceneView = LocalPlayer->CalcSceneView(&ViewFamily,

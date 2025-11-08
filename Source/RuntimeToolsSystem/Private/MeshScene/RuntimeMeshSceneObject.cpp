@@ -33,6 +33,8 @@
 #include "MaterialDomain.h"
 #include <Runtime/MeshConversion/Public/MeshDescriptionToDynamicMesh.h>
 
+#include "Net/UnrealNetwork.h"
+
 URuntimeMeshSceneObject::URuntimeMeshSceneObject()
 {
 	if (!SourceMesh)
@@ -148,6 +150,11 @@ void URuntimeMeshSceneObject::UpdateComponentMaterials(bool bForceRefresh)
 	{
 		SimpleDynamicMeshActor->MeshComponent->NotifyMeshUpdated();
 	}
+}
+
+void URuntimeMeshSceneObject::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 void URuntimeMeshSceneObject::SetAllMaterials(UMaterialInterface* SetToMaterial)

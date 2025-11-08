@@ -103,4 +103,8 @@ protected:
 	TArray<UMaterialInterface*> Materials;
 
 	void UpdateComponentMaterials(bool bForceRefresh);
+
+public:
+	virtual bool IsSupportedForNetworking() const override { return true; }
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

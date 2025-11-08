@@ -17,7 +17,9 @@
 				"CoreUObject",
 				"Engine",
 				"MeshModelingTools",
-				"MeshModelingToolsExp"
+				"MeshModelingToolsExp",
+				"RuntimeGeometryUtils",
+				"GeometryFramework"
 			]
 		}
 	],

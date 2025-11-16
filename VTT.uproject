@@ -7,7 +7,11 @@
 		{
 			"Name": "VTT",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"TransferComponent"
+			]
 		},
 		{
 			"Name": "RuntimeToolsSystem",
@@ -25,7 +29,11 @@
 		{
 			"Name": "TransferComponent",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [

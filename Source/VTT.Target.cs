@@ -11,6 +11,7 @@ public class VTTTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
 		ExtraModuleNames.Add("VTT");
-        ExtraModuleNames.Add("RuntimeToolsSystem");
+		ExtraModuleNames.Add("RuntimeToolsSystem");
+		ExtraModuleNames.Add("TransferComponent");
     }
 }

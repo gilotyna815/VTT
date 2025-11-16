@@ -70,7 +70,7 @@ public:
  * is sending it and each point. Internally they do the same thing plus error checking.
  */
 UCLASS()
-class UTransferComponent : public UActorComponent {
+class TRANSFERCOMPONENT_API UTransferComponent : public UActorComponent {
     GENERATED_BODY()
 
 public:

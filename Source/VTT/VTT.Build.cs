@@ -16,7 +16,8 @@ public class VTT : ModuleRules
             "InteractiveToolsFramework",
             "RuntimeToolsSystem",
             "MeshModelingTools",
-            "MeshModelingToolsExp"
+            "MeshModelingToolsExp",
+            "TransferComponent"
         });
     }
 }

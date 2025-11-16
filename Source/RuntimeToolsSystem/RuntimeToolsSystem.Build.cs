@@ -22,7 +22,8 @@ public class RuntimeToolsSystem: ModuleRules
             "ModelingComponents",
             "MeshModelingTools",
             "MeshModelingToolsExp",
-            "RuntimeGeometryUtils"
+            "RuntimeGeometryUtils",
+            "TransferComponent"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] {

@@ -4,6 +4,12 @@
 #include "VTTPlayerController.h"
 
 #include "TransferComponent/Public/TransferComponent.h"
+#include "GeneratedMesh.h"
+
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
+#include "DynamicMesh/DynamicMesh3.h"
+#include "UDynamicMesh.h"
+#include "TestDynamicMeshActor.h"
 
 AVTTPlayerController::AVTTPlayerController()
 {
@@ -19,16 +25,53 @@ void AVTTPlayerController::BeginPlay()
 	TestTransferComponent();
 }
 
+struct FMySaveGameArchive : public FObjectAndNameAsStringProxyArchive
+{
+	FMySaveGameArchive(FArchive& InInnerArchive) : FObjectAndNameAsStringProxyArchive(InInnerArchive, false)
+	{
+		ArIsSaveGame = false;
+	}
+};
+
 void AVTTPlayerController::TestTransferComponent()
 {
 	if (GetNetMode() == ENetMode::NM_Client)
 	{
-		// create test buffer
-		int bufferLength = 1000000;
+		// import bunny model
+		FString UsePath = TEXT("RuntimeToolsSystem/Bunny.obj");
+		if (FPaths::FileExists(UsePath) == false && FPaths::IsRelative(UsePath))
+		{
+			UsePath = FPaths::ProjectContentDir() + UsePath;
+		}
+
+		UGeneratedMesh* ImportMesh = NewObject<UGeneratedMesh>();
+		if (ImportMesh->ReadMeshFromFile(UsePath, true) == false)
+		{
+			ImportMesh->AppendSphere(200, 8, 8);
+		}
+
+		UDynamicMesh* ImportDynamicMesh = NewObject<UDynamicMesh>();
+		ImportDynamicMesh->ResetToCube();
+		ImportDynamicMesh->SetMesh(*ImportMesh->GetMesh().Get());
+
+		// spawn
+		ATestDynamicMeshActor* SpawnedActor = (ATestDynamicMeshActor*) GetWorld()->SpawnActor(ATestDynamicMeshActor::StaticClass());
+		SpawnedActor->SetDynamicMesh(ImportDynamicMesh);
+
+		// serialize bunny model
+		TArray<uint8> BunnyData;
+		FMemoryWriter MemoryWriter(BunnyData, true);
+		FMySaveGameArchive MyArchive(MemoryWriter);
+		ImportDynamicMesh->Serialize(MyArchive);
+
+		// ==> Bunny is not serialized correctly because fuck you.
+
+		// create ///test buffer
+		int bufferLength = BunnyData.Num(); /// 1000000;
 		uint8* buffer = new uint8[bufferLength];
 		for (int i = 0; i < bufferLength; i++)
 		{
-			buffer[i] = i % 16;
+			buffer[i] = BunnyData[i]; /// i % 16;
 		}
 
 		uint64 transferId = TransferComponent->SendBufferToServer(
@@ -54,19 +97,30 @@ void AVTTPlayerController::ClientNotifiesServerTransferCompleted_Implementation(
 	int length = Transfer->Length;
 	UE_LOG(LogTemp, Warning, TEXT("Received buffer of length %d srtarting with %u"), length, &buffer);
 
+	TArray<uint8> BunnyData;
 	for (int i = 0; i < length; i++)
 	{
-		if (buffer[i] == i % 16)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("YAY!"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("THE BUFFERS ARE NOT THE SAME."));
-			return;
-		}
+		////if (buffer[i] == i % 16)
+		////{
+		////	//UE_LOG(LogTemp, Warning, TEXT("YAY!"));
+		////}
+		////else
+		////{
+		////	UE_LOG(LogTemp, Warning, TEXT("THE BUFFERS ARE NOT THE SAME."));
+		////	return;
+		////}
+		BunnyData.Emplace(buffer[i]);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("THE BUFFERS ARE THE SAME."));
+	///UE_LOG(LogTemp, Warning, TEXT("THE BUFFERS ARE THE SAME."));
+
+	FMemoryReader MemoryReader(BunnyData, true);
+	FMySaveGameArchive MyArchive(MemoryReader);
+	UDynamicMesh* ImportedBunny = NewObject<UDynamicMesh>();
+	ImportedBunny->Serialize(MyArchive);
+
+	// spawn
+	ATestDynamicMeshActor* SpawnedActor = (ATestDynamicMeshActor*)GetWorld()->SpawnActor(ATestDynamicMeshActor::StaticClass());
+	SpawnedActor->SetDynamicMesh(ImportedBunny);
 
 	// after using buffer, clear it by hand or it will stick around until PlayerController is destroyed
 	TransferComponent->ServerFreesCompletedTransfer(transferId);

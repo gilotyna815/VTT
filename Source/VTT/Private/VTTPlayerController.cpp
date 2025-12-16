@@ -20,9 +20,6 @@ AVTTPlayerController::AVTTPlayerController()
 void AVTTPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// https://www.youtube.com/watch?v=dkbZzPo1Ulg
-	TestTransferComponent();
 }
 
 struct FMySaveGameArchive : public FObjectAndNameAsStringProxyArchive
@@ -63,8 +60,6 @@ void AVTTPlayerController::TestTransferComponent()
 		FMemoryWriter MemoryWriter(BunnyData, true);
 		FMySaveGameArchive MyArchive(MemoryWriter);
 		ImportDynamicMesh->Serialize(MyArchive);
-
-		// ==> Bunny is not serialized correctly because fuck you.
 
 		// create ///test buffer
 		int bufferLength = BunnyData.Num(); /// 1000000;

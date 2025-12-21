@@ -17,9 +17,13 @@
 		{
 			"Name": "TransferComponent",
 			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "SaveSystem",
+			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"CoreUObject",
 				"Engine"
 			]
 		}

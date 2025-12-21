@@ -7,24 +7,12 @@
 		{
 			"Name": "VTT",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"TransferComponent"
-			]
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "RuntimeToolsSystem",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"CoreUObject",
-				"Engine",
-				"MeshModelingTools",
-				"MeshModelingToolsExp",
-				"RuntimeGeometryUtils",
-				"GeometryFramework"
-			]
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "TransferComponent",
